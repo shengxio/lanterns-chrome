@@ -1,0 +1,55 @@
+{
+  "manifest_version": 3,
+  "name": "chatter",
+  "version": "0.1.1",
+  "description": "A chrome extension for user text chatter.",
+  "icons": {
+    "16": "images/bot16.png",
+    "32": "images/bot32.png",
+    "48": "images/bot48.png",
+    "64": "images/bot64.png",
+    "128": "images/bot128.png"
+  },
+  "web_accessible_resources": [{
+    "resources":["images/bot16.png", "images/bot128.png"],
+    "matches": ["https://*/*", "http://*/*"]
+  },
+  {
+    "resources":["bot.png"],
+    "matches": ["https://*/*", "http://*/*"]
+  }
+],
+  "default_locale": "en",
+  "background": {
+    "service_worker": "scripts/background.js"
+  },
+  "content_scripts": 
+	[
+		{
+			"matches": ["*://*/*"],
+			"js": ["scripts/contentscript.js"],
+			"run_at": "document_end"
+		}
+	],
+  "permissions": [
+    "storage",
+    "contextMenus",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://lpbebayffa.execute-api.us-east-1.amazonaws.com/alpha-seed/"
+  ],
+  "options_ui": {
+    "page": "options.html"
+  },
+  "action":{
+    "default_icon": {
+      "128":"images/icon-128.png"
+    },
+    "default_title": "lanterns.fun",
+    "default_popup": "popup.html"
+  },
+  "omnibox": {
+    "keyword": "OMNIBOX-KEYWORD"
+  }
+}
