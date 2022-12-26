@@ -1,55 +1,40 @@
 'use strict';
 // bootstrap user active tab startup
 
-let appName = "LAMP";
-let appVersion = "0.0.1";
-let appDescription = "LAMP in-browser";
-let botname = "Nancy"
+let appName = "Lanterns";
+let appVersion = "0.1.1";
+let appDescription = "Lanterns in-browser";
+let botname = "Nancy";
+let bot_id = "101";
 let sysFontSize = "11px";
 let username = "me";
 let text_color = {"user":"green","bot":"purple","sys":"grey"};
-// let last_time = chrome.storage.sync.get("last_timestamp", function(items) {
-//     if (items.last_timestamp) {
-//         return items.last_timestamp;
-//     } else {
-//         return new Date();
-//     }
-// });
-
 const appIcon = "bot.png";
 
-let chatbox_hidden = true;
+let garbageBin = new Set();
 
-// let appIconActive = "images/icon-128-active.png";
-console.log('chatterbox: content script loaded');
-// var scripts = document.getElementsByTagName("script"),
-//     src = scripts[scripts.length-1].src;
-// console.log(src)
+// something here
+document.addEventListener('complete', (event) => {
+    console.log(`web content readystate: ${document.readyState}`);
+});
+
+// this piece of code is for reading the extension storages
+chrome.storage.sync.get("", function(items) {
+    console.log("storage items:");
+    console.log(items);
+});
+
+let chatbox_hidden = true;
 
 // initialize the user preferences specified in the options page
 init_spec();
 
-
-// load page
-let data = claw_page(document.body);
-
-// send to ai to get rating/content
-service(data);
-
 // load interface
 load_interface();
-// read context
-read_context();
+
 // update interface
 // load interface
 // refresh interface?
-// 
-
-// what problem does this solve?
-// it helps users to check the node and the source of the content in the node and its network first and interact with the user in
-// a conversational way.
-
-
 
 // initialize the user specified preferences
 function init_spec(){
@@ -71,50 +56,6 @@ function init_spec(){
 
 }
 
-// go through the hierarchy of the page and find the components that are needed
-function claw_page(node){
-    // I stole this function from here:
-	// http://is.gd/mwZp7E
-	
-	var child, next;
-    var neighbours = new Set();
-
-	switch ( node.nodeType )  
-	{
-		case 1:  // Element
-        case 2:  // Attribute
-        case 3: // Text node
-            if(node.parentElement.tagName.toLowerCase() == "a") {
-                // console.log(node.parentElement.tagName.toLowerCase());
-                // console.log(node.textContent);
-                // console.log(node);
-                // neighbours.push(node);
-                // console.log(node.parentElement.href);
-                neighbours.add(node.parentElement.href);
-            }
-			break;
-        case 4:  // CDATASection
-        case 5:  // EntityReference
-        case 6:  // Entity
-        case 7:  // ProcessingInstruction
-        case 8:  // Comment
-		case 9:  // Document
-        case 10: // DocumentType
-		case 11: // Document fragment
-			child = node.firstChild;
-			while ( child ) 
-			{
-				next = child.nextSibling;
-				claw_page(child);
-				child = next;
-			}
-			return ;
-        case 12: // Notation
-
-		
-	}
-}
-
 // run service
 function service(data){
 }
@@ -122,7 +63,7 @@ function service(data){
 // load interface
 function load_interface(){
     let overlay = createOverlay();
-
+    
     // add a button which opens the chat window
     overlay.appendChild(createUIButton());
 
@@ -131,23 +72,23 @@ function load_interface(){
 
     // add the overlay to the page
     document.body.appendChild(overlay);
-
+    
     // add the dragging functionality for the chat window
     dragElement(document.getElementById("chat-window"));
+    dragElement(document.getElementById("Lanterns-toggle"));
 }
 
 // create the overall iframe for the component
 function createOverlay(){
     let overlay = document.createElement("div");
-    // overlay.style.display = "none";
-
+    
     // add a button which opens the chat window
-    overlay.id = "lamp-overlay";
-    overlay.className = "lamp-in-browser-component";
+    overlay.id = "Lanterns-overlay";
+    overlay.className = "Lanterns-in-browser-component";
     overlay.style.position = "fixed";
-    overlay.style.bottom = "50px";
+    overlay.style.bottom = "100px";
     overlay.style.right = "50px";
-    overlay.style.zIndex = "848";
+    overlay.style.zIndex = "2147483647";
 
     return overlay;
 }
@@ -160,21 +101,44 @@ function createUIButton() {
     button.style.borderRadius = "50%";
     button.style.width = "50px";
     button.style.height = "50px";
-    button.style.bottom = "100px";
-    button.style.right = "50px";
     button.style.cursor = "pointer";
     button.style.boxShadow = "0px 0px 5px 0px rgba(0,0,0,0.75)";
     button.style.zIndex = "2147483647";
 
     button.className = "content-overlay-button";
     button.title = "Open "+appName;
+    button.id = "Lanterns-toggle";
 
     button.src = chrome.runtime.getURL(appIcon);
     button.addEventListener("click", function() {
-        // console.log("button clicked ");
+        // toggle the chat window
+        toggleElement(document.getElementById("chat-window"));
+        
+        // scrape the page text
+        let textPanel = createTextPanel();
+        document.body.appendChild(textPanel);
+
+        // scrape the page title
+        let title_element = document.getElementsByTagName("title");
+        if(title_element.length > 0){
+            let title = title_element[0].innerHTML;
+            console.log(title);
+        }
+
+        // scrape the page url
+        let linkPanel = createLinkPanel();
+        document.body.appendChild(linkPanel);    
+
+    }, false);
+
+    // add mouse right click event listener
+    button.addEventListener("contextmenu", function(event) {
+        // prevent the default context menu
+        event.preventDefault();
+        // toggle the chat window
         toggleElement(document.getElementById("chat-window"));
     }, false);
-    
+
     button.addEventListener("mouseover", function() {
         // light up the button
         button.style.boxShadow = "0px 0px 10px 0px rgba(0,0,0,0.75)";
@@ -183,15 +147,6 @@ function createUIButton() {
     button.addEventListener("mouseout", function() {
         // dim the button
         button.style.boxShadow = "0px 0px 5px 0px rgba(0,0,0,0.75)";
-    }, false);
-
-    button.addEventListener("mousedown", function() {
-        // move the icon
-        button.style.boxShadow = "0px 0px 5px 0px rgba(0,0,0,0.75)";
-    }, false);
-
-    button.addEventListener("mouseup", function() {
-        // release the icon
     }, false);
 
     return button;
@@ -271,8 +226,6 @@ function createChatBox(){
     windowBody.style.width = "100%";
     windowBody.style.borderRadius = "10px";
     windowBody.style.overflowY = "auto";
-
-    // windowBody.style.flexDirection = "column-reverse";
     windowBody.style.zIndex = "91";
     windowBody.style.backgroundColor = "#f1f1f1";
     windowBody.style.color = "black";
@@ -343,16 +296,13 @@ function createChatBox(){
         console.log("chat button clicked");
         let text = textArea.value;
         if(text.length > 0){
-            // let timeReturn = createTimestamp(last_time);
-
             windowBody.appendChild(createTimestamp());
-            // last_time = timeReturn.last_timestamp;
             windowBody.appendChild(createChatMessage(text, text_color["user"],"right"));
-            // let response = send_to_lanterns(botname,text,)
-            // let response = send_openai(text);
-            // console.log(response)
-            windowBody.appendChild(createChatMessage("Hello you!", text_color["bot"],"left"));
-            // windowBody.appendChild(createChatMessage("Nancy: "+response, text_color["bot"],"left"));
+            
+            let bot_msg_box = createChatMessage("thinking...", text_color["bot"],"left")
+            send_to_lanterns(botname,text,bot_msg_box,update_element);
+            
+            windowBody.appendChild(bot_msg_box);
             
         }
         textArea.value = "";
@@ -384,18 +334,380 @@ function createChatBox(){
     return window
 }
 
-// function send_to_server(text){
-//     let data = {
-//         "text": text,
-//         "user": user,
-//         "room": room
-//     }
-//     fetch("chat", data);
+// create a panel for collected links
+function createLinkPanel(){
+    // scrape the node for links
+    let collectedLinks = new Set();
 
-//     return response
-// }
+    function dfsGetLinks(node) 
+    {
+        // I stole this function from here:
+        // http://is.gd/mwZp7E
+        
+        var child, next;
 
-// function createTimestamp(last_timestamp){
+        switch ( node.nodeType )  
+        {
+            case 1:  // Element
+            case 9:  // Document
+            case 11: // Document fragment
+                child = node.firstChild;
+                while ( child ) 
+                {
+                    next = child.nextSibling;
+                    dfsGetLinks(child);
+                    child = next;
+                }
+                break;
+
+            case 3: // Text node
+                if(node.parentElement.tagName.toLowerCase() == "a") {
+                    let link = node.parentElement.href;
+                    let text = node.parentElement.innerText;
+                    let linkObj = {
+                        "link": link,
+                        "text": text
+                    }
+                    collectedLinks.add(linkObj);
+                }
+                break;
+        }
+    }
+
+    dfsGetLinks(document.body);
+    console.log(collectedLinks);
+
+    // create a panel for collected links
+    let linkPanel = document.createElement("div");
+    linkPanel.id = "lanterns-link-panel";
+    linkPanel.className = "lanterns-link-panel";
+    linkPanel.style.display = "none";
+    linkPanel.style.position = "fixed";
+    linkPanel.style.bottom = "0px";
+    linkPanel.style.right = "0px";
+    linkPanel.style.width = "300px";
+    linkPanel.style.height = "200px";
+    linkPanel.style.borderRadius = "10px";
+    linkPanel.style.zIndex = "2147483640";
+    linkPanel.style.backgroundColor = "white";
+    linkPanel.style.color = "black";
+    linkPanel.style.boxShadow = "0px 0px 5px 0px rgba(0,0,0,0.75)";
+    linkPanel.style.overflowY = "auto";
+    linkPanel.style.padding = "10px";
+    linkPanel.style.fontSize = sysFontSize;
+    linkPanel.hidden = false;
+
+    let linkPanelHeader = document.createElement("div");
+    linkPanelHeader.id = "lanterns-link-panel-header";
+    linkPanelHeader.className = "lanterns-link-panel-header";
+    
+    let linkPanelHeaderTitle = document.createElement("div");
+    linkPanelHeaderTitle.id = "lanterns-link-panel-header-title";
+    linkPanelHeaderTitle.className = "lanterns-link-panel-header-title";
+    linkPanelHeaderTitle.style.display = "inline-block";
+    linkPanelHeaderTitle.style.width = "80%";
+    linkPanelHeaderTitle.style.height = "100%";
+    linkPanelHeaderTitle.style.borderRadius = "10px";
+    linkPanelHeaderTitle.style.zIndex = "2147483647";
+    linkPanelHeaderTitle.style.textAlign = "center";
+    linkPanelHeaderTitle.style.verticalAlign = "middle";
+    linkPanelHeaderTitle.style.lineHeight = "30px";
+    linkPanelHeaderTitle.style.fontSize = sysFontSize;
+    linkPanelHeaderTitle.innerHTML = "Collected Links";
+
+    let linkPanelHeaderCloseButton = document.createElement("button");
+    linkPanelHeaderCloseButton.id = "lanterns-link-panel-header-close-button";
+    linkPanelHeaderCloseButton.className = "lanterns-link-panel-header-close-button";
+    linkPanelHeaderCloseButton.style.display = "inline-block";
+    linkPanelHeaderCloseButton.style.width = "20%";
+    linkPanelHeaderCloseButton.style.height = "100%";
+    linkPanelHeaderCloseButton.style.borderRadius = "10px";
+    linkPanelHeaderCloseButton.style.zIndex = "2147483647";
+    linkPanelHeaderCloseButton.style.textAlign = "center";
+    linkPanelHeaderCloseButton.style.verticalAlign = "middle";
+    linkPanelHeaderCloseButton.style.lineHeight = "30px";
+    linkPanelHeaderCloseButton.style.fontSize = sysFontSize;
+    linkPanelHeaderCloseButton.style.backgroundColor = "orange";
+    linkPanelHeaderCloseButton.style.color = "white";
+    linkPanelHeaderCloseButton.style.border = "none";
+    linkPanelHeaderCloseButton.style.boxShadow = "0px 0px 0px 0px rgba(0,0,0,0)";
+    linkPanelHeaderCloseButton.innerHTML = "Close";
+    linkPanelHeaderCloseButton.addEventListener("click", function() {
+        linkPanel.style.display = "none";
+    }
+    , false);
+
+    linkPanelHeaderCloseButton.addEventListener("mousedown", function() {
+        linkPanelHeaderCloseButton.style.backgroundColor = "silver";
+        linkPanelHeaderCloseButton.style.color = "orange";
+    }
+    , false);
+
+    linkPanelHeaderCloseButton.addEventListener("mouseup", function() {
+        linkPanelHeaderCloseButton.style.backgroundColor = "orange";
+        linkPanelHeaderCloseButton.style.color = "white";
+    }
+    , false);
+
+    linkPanelHeaderCloseButton.addEventListener("mouseover", function() {
+        linkPanelHeaderCloseButton.style.boxShadow = "0px 0px 5px 0px rgba(0,0,0,0.75)";
+    }
+    , false);
+
+    linkPanelHeaderCloseButton.addEventListener("mouseout", function() {
+        linkPanelHeaderCloseButton.style.boxShadow = "0px 0px 0px 0px rgba(0,0,0,0)";
+    }
+    , false);
+
+    linkPanelHeader.appendChild(linkPanelHeaderTitle);
+    linkPanelHeader.appendChild(linkPanelHeaderCloseButton);
+    linkPanel.appendChild(linkPanelHeader);
+
+    // add the links to the panel
+    for (let i = 0; i < collectedLinks.size; i++) {
+        if (collectedLinks[i]) {
+            let link = document.createElement("a");
+            link.id = "lanterns-link-" + i;
+            link.className = "lanterns-link";
+            link.style.display = "block";
+            link.style.width = "100%";
+            link.style.height = "30px";
+            link.style.borderRadius = "10px";
+            link.style.zIndex = "2147483647";
+            link.style.textAlign = "center";
+            link.style.verticalAlign = "middle";
+            link.style.lineHeight = "30px";
+            link.style.fontSize = sysFontSize;
+            link.style.backgroundColor = "orange";
+            link.style.color = "white";
+            link.style.border = "none";
+            link.style.boxShadow = "0px 0px 0px 0px rgba(0,0,0,0)";
+            link.style.marginBottom = "5px";
+            link.href = collectedLinks[i]["link"];
+            link.innerHTML = collectedLinks[i]["text"];
+            link.target = "_blank";
+            link.addEventListener("mousedown", function() {
+                link.style.backgroundColor = "silver";
+                link.style.color = "orange";
+            }
+            , false);
+            link.addEventListener("mouseup", function() {
+                link.style.backgroundColor = "orange";
+                link.style.color = "white";
+            }
+            , false);
+            link.addEventListener("mouseover", function() {
+                link.style.boxShadow = "0px 0px 5px 0px rgba(0,0,0,0.75)";
+            }
+            , false);
+            link.addEventListener("mouseout", function() {
+                link.style.boxShadow = "0px 0px 0px 0px rgba(0,0,0,0)";
+            }
+            , false);
+            linkPanel.appendChild(link);
+        }
+    }
+
+    return linkPanel;
+}
+
+
+// create a panel for collected text
+function createTextPanel(){
+    let collectedText = new Set();
+
+    // get the collected text
+    function dfsGetText(node) 
+    {
+        // I stole this function from here:
+        // http://is.gd/mwZp7E
+        
+        var child, next;
+    
+        switch ( node.nodeType )  
+        {
+            case 1:  // Element
+            case 9:  // Document
+            case 11: // Document fragment
+                child = node.firstChild;
+                while ( child ) 
+                {
+                    next = child.nextSibling;
+                    dfsGetText(child);
+                    child = next;
+                }
+                break;
+    
+            case 3: // Text node
+                if(node.parentElement.tagName.toLowerCase() == "p") {
+                    let text = node.textContent;
+                    let textObj = {
+                        "text": text
+                    }
+                    collectedText.add(textObj);
+                }
+                break;
+        }
+    }
+
+    // scrape the text from the current page
+    dfsGetText(document.body);
+    console.log(collectedText);
+
+    // create the panel
+    let textPanel = document.createElement("div");
+    textPanel.id = "lanterns-text-panel";
+    textPanel.className = "lanterns-text-panel";
+    textPanel.style.display = "none";
+    textPanel.style.position = "fixed";
+    textPanel.style.top = "0px";
+    textPanel.style.left = "0px";
+    textPanel.style.width = "100%";
+    textPanel.style.height = "100%";
+    textPanel.style.zIndex = "2147483647";
+    textPanel.style.backgroundColor = "rgba(0,0,0,0.5)";
+    textPanel.style.textAlign = "center";
+    textPanel.style.verticalAlign = "middle";
+    textPanel.style.lineHeight = "30px";
+    textPanel.style.fontSize = sysFontSize;
+    textPanel.style.color = "white";
+    textPanel.style.border = "none";
+    textPanel.style.boxShadow = "0px 0px 0px 0px rgba(0,0,0,0)";
+    
+    // create the header
+    let textPanelHeader = document.createElement("div");
+    textPanelHeader.id = "lanterns-text-panel-header";
+    textPanelHeader.className = "lanterns-text-panel-header";
+    textPanelHeader.style.display = "block";
+    textPanelHeader.style.width = "100%";
+    textPanelHeader.style.height = "30px";
+    textPanelHeader.style.borderRadius = "10px";
+    textPanelHeader.style.zIndex = "2147483647";
+    textPanelHeader.style.textAlign = "center";
+    textPanelHeader.style.verticalAlign = "middle";
+    textPanelHeader.style.lineHeight = "30px";
+    textPanelHeader.style.fontSize = sysFontSize;
+    textPanelHeader.style.backgroundColor = "orange";
+    textPanelHeader.style.color = "white";
+    textPanelHeader.style.border = "none";
+    textPanelHeader.style.boxShadow = "0px 0px 0px 0px rgba(0,0,0,0)";
+    textPanelHeader.style.marginBottom = "5px";
+
+
+    let textPanelHeaderTitle = document.createElement("div");
+    textPanelHeaderTitle.id = "lanterns-text-panel-header-title";
+    textPanelHeaderTitle.className = "lanterns-text-panel-header-title";
+    textPanelHeaderTitle.style.display = "inline-block";
+    textPanelHeaderTitle.style.width = "calc(100% - 30px)";
+    textPanelHeaderTitle.style.height = "30px";
+    textPanelHeaderTitle.style.borderRadius = "10px";
+    textPanelHeaderTitle.style.zIndex = "2147483647";
+    textPanelHeaderTitle.style.textAlign = "center";
+    textPanelHeaderTitle.style.verticalAlign = "middle";
+    textPanelHeaderTitle.style.lineHeight = "30px";
+    textPanelHeaderTitle.style.fontSize = sysFontSize;
+    textPanelHeaderTitle.style.backgroundColor = "orange";
+    textPanelHeaderTitle.style.color = "white";
+    textPanelHeaderTitle.style.border = "none";
+    textPanelHeaderTitle.style.boxShadow = "0px 0px 0px 0px rgba(0,0,0,0)";
+    textPanelHeaderTitle.style.marginBottom = "5px";
+    textPanelHeaderTitle.innerHTML = "Collected Text";
+    textPanelHeader.appendChild(textPanelHeaderTitle);
+
+    let textPanelHeaderClose = document.createElement("div");
+    textPanelHeaderClose.id = "lanterns-text-panel-header-close";
+    textPanelHeaderClose.className = "lanterns-text-panel-header-close";
+    textPanelHeaderClose.style.display = "inline-block";
+    textPanelHeaderClose.style.width = "30px";
+    textPanelHeaderClose.style.height = "30px";
+    textPanelHeaderClose.style.borderRadius = "10px";
+    textPanelHeaderClose.style.zIndex = "2147483647";
+    textPanelHeaderClose.style.textAlign = "center";
+    textPanelHeaderClose.style.verticalAlign = "middle";
+    textPanelHeaderClose.style.lineHeight = "30px";
+    textPanelHeaderClose.style.fontSize = sysFontSize;
+    textPanelHeaderClose.style.backgroundColor = "orange";
+    textPanelHeaderClose.style.color = "white";
+    textPanelHeaderClose.style.border = "none";
+    textPanelHeaderClose.style.boxShadow = "0px 0px 0px 0px rgba(0,0,0,0)";
+    textPanelHeaderClose.style.marginBottom = "5px";
+    textPanelHeaderClose.innerHTML = "X";
+    textPanelHeaderClose.addEventListener("click", function(){
+        textPanel.style.display = "none";
+    });
+    
+    textPanelHeader.appendChild(textPanelHeaderClose);
+    textPanel.appendChild(textPanelHeader);
+
+    // create the body
+    let textPanelBody = document.createElement("div");
+    textPanelBody.id = "lanterns-text-panel-body";
+    textPanelBody.className = "lanterns-text-panel-body";
+    textPanelBody.style.display = "block";
+    textPanelBody.style.width = "100%";
+    textPanelBody.style.height = "calc(100% - 30px)";
+    textPanelBody.style.borderRadius = "10px";
+    textPanelBody.style.zIndex = "2147483647";
+    textPanelBody.style.textAlign = "center";
+    textPanelBody.style.verticalAlign = "middle";
+    textPanelBody.style.lineHeight = "30px";
+    textPanelBody.style.fontSize = sysFontSize;
+    textPanelBody.style.backgroundColor = "white";
+    textPanelBody.style.color = "black";
+    textPanelBody.style.border = "none";
+    textPanelBody.style.boxShadow = "0px 0px 0px 0px rgba(0,0,0,0)";
+    textPanelBody.style.marginBottom = "5px";
+    textPanelBody.style.overflowY = "scroll";
+    textPanel.appendChild(textPanelBody);
+
+    // create the footer
+    let textPanelFooter = document.createElement("div");
+    textPanelFooter.id = "lanterns-text-panel-footer";
+    textPanelFooter.className = "lanterns-text-panel-footer";
+    textPanelFooter.style.display = "block";
+    textPanelFooter.style.width = "100%";
+    textPanelFooter.style.height = "30px";
+    textPanelFooter.style.borderRadius = "10px";
+    textPanelFooter.style.zIndex = "2147483647";
+    textPanelFooter.style.textAlign = "center";
+    textPanelFooter.style.verticalAlign = "middle";
+    textPanelFooter.style.lineHeight = "30px";
+    textPanelFooter.style.fontSize = sysFontSize;
+    textPanelFooter.style.backgroundColor = "orange";
+    textPanelFooter.style.color = "white";
+    textPanelFooter.style.border = "none";
+    textPanelFooter.style.boxShadow = "0px 0px 0px 0px rgba(0,0,0,0)";
+    textPanelFooter.style.marginBottom = "5px";
+    textPanel.appendChild(textPanelFooter);
+
+    
+    for (let i = 0; i < collectedText.size; i++) {
+        if(collectedText[i]){
+            let textPanelBodyText = document.createElement("div");
+            textPanelBodyText.id = "lanterns-text-panel-body-text-" + i;
+            textPanelBodyText.className = "lanterns-text-panel-body-text";
+            textPanelBodyText.style.display = "block";
+            textPanelBodyText.style.width = "100%";
+            textPanelBodyText.style.height = "auto";
+            textPanelBodyText.style.borderRadius = "10px";
+            textPanelBodyText.style.zIndex = "2147483647";
+            textPanelBodyText.style.textAlign = "left";
+            textPanelBodyText.style.verticalAlign = "middle";
+            textPanelBodyText.style.lineHeight = "30px";
+            textPanelBodyText.style.fontSize = sysFontSize;
+            textPanelBodyText.style.backgroundColor = "white";
+            textPanelBodyText.style.color = "black";
+            textPanelBodyText.style.border = "none";
+            textPanelBodyText.style.boxShadow = "0px 0px 0px 0px rgba(0,0,0,0)";
+            textPanelBodyText.style.marginBottom = "5px";
+            textPanelBodyText.innerHTML = collectedText[i];
+            textPanelBody.appendChild(textPanelBodyText);
+        }
+    }
+    return textPanel;
+}
+
+// create timestamp for the chat
 function createTimestamp(){
     let timestamp = document.createElement("div");
     timestamp.className = "chat-timestamp";
@@ -409,10 +721,9 @@ function createTimestamp(){
 
     let date = new Date();
     
-    
-    let years = date.getFullYear().toString();
-    let months = getTimeConverter(date.getMonth()+1)
-    let days = getTimeConverter(date.getDate())
+    // let years = date.getFullYear().toString();
+    // let months = getTimeConverter(date.getMonth()+1)
+    // let days = getTimeConverter(date.getDate())
     let hours = getTimeConverter(date.getHours());
     let minutes = getTimeConverter(date.getMinutes());
     let seconds = getTimeConverter(date.getSeconds());
@@ -429,7 +740,8 @@ function createTimestamp(){
     let timestampText = document.createTextNode(date_string);
     timestamp.appendChild(timestampText);
 
-    return {timestamp, date}
+    // return {timestamp, date}
+    return timestamp
 }
 
 function getTimeConverter(num){
@@ -463,9 +775,6 @@ function createChatMessage(text,color,location){
     messageText.style.fontSize = sysFontSize;
     messageText.style.fontWeight = "bold";
     messageText.style.color = color;
-    // messageText.style.backgroundColor = "orange";
-    // messageText.style.borderRadius = "10px";
-    // messageText.style.boxShadow = "0px 0px 5px 0px rgba(0,0,0,0.75)";
     messageText.style.cursor = "pointer";
     messageText.style.textAlign = location;
     messageText.style.width = "auto";
@@ -479,7 +788,6 @@ function createChatMessage(text,color,location){
     messageText.style.lineHeight = "1.5em";
     messageText.style.height = "auto";
     messageText.style.minHeight = "20px";
-    // messageText.innerHTML = user + ": ";
     
     let messageTextText = document.createTextNode(text);
     messageText.appendChild(messageTextText);
@@ -502,142 +810,172 @@ function closeChatBox(){
 
 // read context
 function read_context(){
-    let neighbours = new Set();
-    claw_page(document.body,neighbours);
-    console.log("neighbour nodes");
-    console.log(neighbours);
 }
 
-// where we get all the information on this node.
-function walk(node,neighbours)
-{
-	// I stole this function from here:
-	// http://is.gd/mwZp7E
-	
-	var child, next;
+function updateText(element, text){
+    element.innerHTML = text;
+}
 
-	switch ( node.nodeType )  
-	{
-		case 1:  // Element
-		case 9:  // Document
-		case 11: // Document fragment
-			child = node.firstChild;
-			while ( child ) 
-			{
-				next = child.nextSibling;
-				walk(child,neighbours);
-				child = next;
-			}
-			return ;
-
-		case 3: // Text node
-            if(node.parentElement.tagName.toLowerCase() == "a") {
-                // console.log(node.parentElement.tagName.toLowerCase());
-                // console.log(node.textContent);
-                // console.log(node);
-                // neighbours.push(node);
-                // console.log(node.parentElement.href);
-                neighbours.add(node.parentElement.href);
+function post_data(apiURL,apiKey, data,element,callback){
+    // send data to lanterns api
+    chrome.runtime.sendMessage(
+        {
+            contentScriptQuery: "contentPostData"
+            , data: data
+            , url: apiURL
+            , key: apiKey
+            , type: "POST"
+        }, function (response) {
+            if (response != undefined && response != "") {
+                console.log(response);
+                callback(element,response.text);
             }
-			break;
-	}
+            else {
+                console.log(response);
+            }
+        });
 }
 
-// generic api service request
-function send_to_lanterns(bot_name,data,resource,callback){
+function update_element(element, text){
+    element.getElementsByTagName("p")[0].innerHTML = text;
+}
+
+/*
+lanterns api interaction functions
++ chat request
++ service requests
+*/
+
+// chat api request
+function send_to_lanterns(bot_name,text,bot_msg_box,callback){
     // get api_key from storage
     chrome.storage.sync.get(['lantern_key','lantern_url','user_id'], function(result) {
         let lantern_key = result.lantern_key;
-        let lantern_url = result.lantern_url;
+        let lantern_url = result.lantern_url+"/v1/bots";
         let user_id = result.user_id;
-        // let notify_text = document.getElementById("notify_text");
-
-        // inform user that api is working
-        // notify_text.textContent = "working...";
-
-        // setup generic header
-        let lanternsHeaders = new Headers();
-        lanternsHeaders.append("Content-Type", "application/json");
-        lanternsHeaders.append("x-api-key", lantern_key);
         
         // setup request body
-        let json_body = {
-            "request type": bot_name,
+        let data = {
+            "botname": bot_name,
+            "bot_id": bot_id,
+            "text": text,
             "user_id": user_id,
-            "data": data
+            "rev": appVersion,
+            "timestamp": new Date().toISOString(),
+            "request":"chat"
         };
-
-        // setup request json construct
-        let request_json = {
-            method: 'PUT',
-            headers:lanternsHeaders,
-            body: JSON.stringify(json_body)
-        };
-
-        // setup request
-        let request = new Request(lantern_url+resource,request_json);
-    
-        // send request to lanterns
-        fetch(request).then(res => res.json()).then(function(res){
-            if (res.message=="success"){
-                // check if the request was a feedback request
-                if (request_type!=""){
-                    // update ui components
-                    chrome.storage.sync.set({
-                        output_text:res.data,
-                        partition_key:res.partition_key,
-                        sort_key:res.sort_key
-                    });
-                    callback({
-                        message:res.message,
-                        data:res.data
-                    });
-                }else{
-                    callback({
-                        message:res.message
-                    });
-                }
-        
-            } else {
-                // notify_text.textContent = "Error: " + res.message;
-
-                // check if the request is a feedback request
-                if(request_type!=""){
-                    chrome.storage.sync.set({
-                        partition_key:res.partition_key,
-                        sort_key:res.sort_key
-                    });
-                }
-
-                console.log(res);
-                callback( {
-                    message:res.message
-                });
-            }
-
-        }).catch(function(error){
-            // notify_text.textContent = "Error: " + error;
-            console.log(error);
-            callback( {
-                message:error,
-                data:"something went wrong...."
-            });
-        });
+        // send request through background script
+        post_data(lantern_url,lantern_key,data,bot_msg_box,callback);
     });
 }
 
-// function send_openai(text){
-//     let data = {
-//         "text": text
-//     };
-//     send_to_lanterns("openai",data,"/openai",function(res){
-//         console.log(res);
-//     });
-// }
-//     prefix = "Q: ";
-// }
+function get_bot
 
-// some utility functions for in page video and audio control
+// generic api service request
+
+/* 
+Reader environment extrapolation functions
+The following function extrapolate the environment of the reader includes
+- links
+- images
+- videos
+- text
+- audios
+*/
+
+// get all content from the page
+function getContent(){
+    
+    let links = new Set();
+    let images = new Set();
+    let videos = new Set();
+    let text = new Set();
+    let audios = new Set();
+
+    function dfs(node) 
+    {
+        // I stole this function from here:
+        // http://is.gd/mwZp7E
+        
+        var child, next;
+
+        switch ( node.nodeType )  
+        {
+            case 1:  // Element
+            case 9:  // Document
+            case 11: // Document fragment
+                child = node.firstChild;
+                while ( child ) 
+                {
+                    next = child.nextSibling;
+                    dfs(child);
+                    child = next;
+                }
+                break;
+
+            case 3: // Text node
+                if(node.parentElement.tagName.toLowerCase() == "a") {
+                    let link = node.parentElement.href;
+                    let text = node.parentElement.innerText;
+                    let linkObj = {
+                        "link": link,
+                        "text": text
+                    }
+                    links.add(linkObj);
+                } else if(node.parentElement.tagName.toLowerCase() == "img") {
+                    let image = node.parentElement.src;
+                    images.add(image);
+                } else if(node.parentElement.tagName.toLowerCase() == "video") {
+                    let video = node.parentElement.src;
+                    videos.add(video);
+                } else if(node.parentElement.tagName.toLowerCase() == "audio") {
+                    let audio = node.parentElement.src;
+                    audios.add(audio);
+                } else if(node.parentElement.tagName.toLowerCase() == "p") {
+                    let text = node.parentElement.innerText;
+                    text.add(text);
+                }
+                break;
+        }
+    }
+
+    dfs(document.body);
+    let memory ={
+        "links": links,
+        "images": images,
+        "videos": videos,
+        "text": text,
+        "audios": audios
+    }
+    console.log(memory);
+    setToStorage("memory",memory);
+
+    return memory;
+}
+
+/* UI functions 
+the following functions are used to manipulate the UI elements
++ toggle element on and off
++ toggle element audio/video mute
+
++ update video/audio elements to mute
+    - update all video/audio elements to mute
++ update element can be highlighted and selected when mouse over
++ update element to be dragged
++ update element style
+
++ create custom context menu
+
+*/
+
+// toggle the chat window
+function toggleElement(element){
+    if(element){
+        element.hidden = !element.hidden;
+    }
+}
+
+// toggle an audio/video element
 function toggleMute(element){
     if(element.muted){
         element.pause();
@@ -649,90 +987,40 @@ function toggleMute(element){
     
 }
 
+// mute an audio/video element
 function mute(element){
     element.pause();
     element.muted = true;
 }
 
+// mute all audio/video elements
 function muteAll(){
     document.querySelectorAll("video").forEach(v => mute(v));
     document.querySelectorAll("audio").forEach(a => mute(a));
 }
 
-// Get page title and return the element
-function getTitle(){
-    const title = document.createElement('h1');
-    let titleContainer = document.createElement('div');
-    
-    title.className = "content-overlay-title";
-    // if(document.head.getElementsByTagName("title")[0].textContent != null){
-    //     titleContainer.innerText = document.head.getElementsByTagName("title")[0].textContent;
-    // }
-    
-    // title.appendChild(titleContainer);
-
-    return title;
-}
-
-// Get page title and return the element
-function getDateTime(){
-    let dateTime = document.createElement('div');
-    let dateTimeContainer = document.createElement('div');
-    
-    dateTime.className = "content-overlay-datetime";
-    dateTimeContainer.innerText = document.getElementsByTagName("time")[0].dateTime;
-    dateTime.appendChild(dateTimeContainer);
-
-    return dateTime;
-}
-
-// Get page title and return the element
-function getAuthor(){
-    let author = document.createElement('div');
-    let authorContainer = document.createElement('div');
-    
-    author.className = "content-overlay-author";
-    // authorContainer.innerText = document.body.getElementsByClassName("author")[0].textContent;
-    // author.appendChild(authorContainer);
-
-    return author;
-}
-
-// Get page title and return the element
-function getContent(){
-    let content = document.createElement('h1');
-    let contents = document.body.getElementsByTagName("article")[0].innerHTML;
-    
-    // for(let i=0; i<contents.getElementsByTagName("p").length; i++){
-    //     let contentContainer = document.createElement('div');
-    
-    //     content.className = "content-overlay-content";
-    //     contentContainer.innerText = contents.getElementsByTagName("p")[i].textContent;
-    //     content.appendChild(contentContainer);
-    // }
-
-    return content;
-}
-
-// UI functions 
-
-// toggle the chat window
-function toggleElement(element){
-    if(element){
-        element.hidden = !element.hidden;
+// update element to be highlighted and selected when mouse over
+function updateElementHighlight(element){
+    element.onmouseover = function() {
+        element.style.border = "2px solid #000000";
+        element.style.borderRadius = "5px";
     }
+    element.onmouseout = function() {
+        element.style.border = "none";
+    }
+    return element;
 }
 
 // Make the DIV element draggagle - borrowed from https://www.w3schools.com/howto/howto_js_draggable.asp
-function dragElement(elmnt) {
+function dragElement(element) {
   var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-  let targetElement = document.getElementById(elmnt.id + "-header")
+  let targetElement = document.getElementById(element.id + "-header")
   if (targetElement) {
     /* if present, the header is where you move the DIV from:*/
     targetElement.onmousedown = dragMouseDown;
   } else {
     /* otherwise, move the DIV from anywhere inside the DIV:*/
-    elmnt.onmousedown = dragMouseDown;
+    element.onmousedown = dragMouseDown;
   }
 
   function dragMouseDown(e) {
@@ -755,8 +1043,8 @@ function dragElement(elmnt) {
     pos3 = e.clientX;
     pos4 = e.clientY;
     // set the element's new position:
-    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+    element.style.top = (element.offsetTop - pos2) + "px";
+    element.style.left = (element.offsetLeft - pos1) + "px";
   }
 
   function closeDragElement() {
@@ -764,4 +1052,108 @@ function dragElement(elmnt) {
     document.onmouseup = null;
     document.onmousemove = null;
   }
+}
+
+
+// create a panel which holds the element in the panel body
+function createPanel(elements){
+    let panel = document.createElement("div");
+    panel.classList.add("panel");
+    panel.classList.add("panel-default");
+    panel.classList.add("lantern-panel");
+    panel.id = "lantern-panel";
+    panel.style.position = "fixed";
+    panel.style.top = "0px";
+    panel.style.right = "0px";
+    panel.style.zIndex = "2147483640";
+    panel.style.borderRadius = "10px";
+    panel.style.backgroundColor = "white";
+    panel.style.boxShadow = "0px 0px 5px 0px rgba(0,0,0,0.75)";
+    panel.style.color = "black";
+    panel.style.overflowY = "auto";
+    panel.style.padding = "10px";
+    panel.style.fontSize = sysFontSize;
+    panel.hidden = false;
+
+
+
+    let panelHeader = document.createElement("div");
+    panelHeader.classList.add("panel-heading");
+    panelHeader.id = "lantern-panel-header";
+    panelHeader.style.display = "block";
+    panelHeader.style.width = "100%";
+    panelHeader.style.height = "30px";
+    panelHeader.style.borderRadius = "10px";
+    panelHeader.style.zIndex = "2147483647";
+
+
+    let panelTitle = document.createElement("h3");
+    panelTitle.classList.add("panel-title");
+    panelTitle.innerText = "Lantern";
+    panelTitle.style.display = "inline-block";
+    panelTitle.style.width = "80%";
+    panelTitle.style.height = "100%";
+    panelTitle.style.borderRadius = "10px";
+    panelTitle.style.zIndex = "2147483647";
+    panelTitle.style.textAlign = "center";
+    panelTitle.style.verticalAlign = "middle";
+    panelTitle.style.lineHeight = "30px";
+    panelTitle.style.fontSize = sysFontSize;
+    panelTitle.innerHTML = "Collected Links";
+    panelHeader.appendChild(panelTitle);
+    panel.appendChild(panelHeader);
+
+    let panelBody = document.createElement("div");
+    panelBody.classList.add("panel-body");
+    panelBody.id = "lantern-panel-body";
+    panelBody.appendChild(elements);
+    panel.appendChild(panelBody);
+
+    let panelHeaderCloseButton = document.createElement("button");
+    panelHeaderCloseButton.classList.add("close");
+    panelHeaderCloseButton.id = "lantern-panel-header-close-button";
+    panelHeaderCloseButton.innerHTML = "X";
+    
+    panelHeaderCloseButton.style.display = "inline-block";
+    panelHeaderCloseButton.style.width = "20%";
+    panelHeaderCloseButton.style.height = "100%";
+    panelHeaderCloseButton.style.borderRadius = "10px";
+    panelHeaderCloseButton.style.zIndex = "2147483647";
+    panelHeaderCloseButton.style.textAlign = "center";
+    panelHeaderCloseButton.style.verticalAlign = "middle";
+    panelHeaderCloseButton.style.lineHeight = "30px";
+    panelHeaderCloseButton.style.fontSize = sysFontSize;
+    panelHeaderCloseButton.style.backgroundColor = "orange";
+    panelHeaderCloseButton.style.color = "white";
+    panelHeaderCloseButton.style.border = "none";
+    panelHeaderCloseButton.style.boxShadow = "0px 0px 0px 0px rgba(0,0,0,0)";
+    panelHeaderCloseButton.onclick = function(){
+        toggleElement(panel);
+    }
+    panelHeader.appendChild(panelHeaderCloseButton);
+
+    return panel;
+}
+
+/* 
+Storage functions
+the following functions are used to get and set variables in the storage
+
++ getFromStorage(key)
++ setToStorage(key,value)
+
+*/
+
+// get variable from the storage
+function getFromStorage(key){
+    chrome.storage.sync.get([key], function(result) {
+        return result[key];
+    });
+}
+
+// set variable in the storage to value
+function setToStorage(key,value){
+    chrome.storage.sync.set({[key]: value}, function() {
+        console.log('Value is set to ' + value);
+    });
 }

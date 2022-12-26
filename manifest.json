@@ -37,14 +37,15 @@
     "tabs"
   ],
   "host_permissions": [
-    "https://lpbebayffa.execute-api.us-east-1.amazonaws.com/alpha-seed/"
+    "https://lpbebayffa.execute-api.us-east-1.amazonaws.com/alpha-seed/*",
+    "https://d4afdjgzee.execute-api.us-east-1.amazonaws.com/v1/*"
   ],
   "options_ui": {
     "page": "options.html"
   },
   "action":{
     "default_icon": {
-      "128":"images/icon-128.png"
+      "128":"images/bot128.png"
     },
     "default_title": "lanterns.fun",
     "default_popup": "popup.html"

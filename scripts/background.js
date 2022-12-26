@@ -17,20 +17,27 @@ chrome.runtime.onInstalled.addListener(function() {
   let user_id = makeid(15);
   chrome.storage.sync.set({
     user_id:user_id,
-    lantern_url:"https://lpbebayffa.execute-api.us-east-1.amazonaws.com/alpha-seed/",
-    lantern_key:"qQjDWgIqSL2fP401hdJJd3Y4caK19iZ930VhTkND",
+    lantern_url:"https://d4afdjgzee.execute-api.us-east-1.amazonaws.com",
+    lantern_key:"MLYVxBi4MD3491nltCeiF47nxrVW8eir9Bb3lG74",
     title:"Response section:",
-    last_timestamp: new Date()
+    last_timestamp: new Date(),
+    memory: {
+      "links": new Set(),
+      "images": [],
+      "videos": [],
+      "text": new Set(),
+      "title": ""
+    } 
   });
 
   // initialize the context menu item send to lamp
-  // let contextMenuItem = {
-  //   "id":"send_to_lamp",
-  //   "title": "send to lamp",
-  //   "contexts": ["selection"]
-  // };
-  // chrome.contextMenus.create(contextMenuItem);
-  // chrome.contextMenus.onClicked.addListener(onClickHandler);
+  let contextMenuItem = {
+    "id":"summarize_post",
+    "title": "summarie post",
+    "contexts": ["selection"]
+  };
+  chrome.contextMenus.create(contextMenuItem);
+  chrome.contextMenus.onClicked.addListener(onClickHandler);
 });
 
 // initialize the unser uninstallation event survey.
@@ -53,12 +60,39 @@ function onClickHandler(clickData) {
   // if popup is open, send text to lamp
   if (popup_open) {
     chrome.runtime.sendMessage({
-      type:"send_to_lamp",
+      type:"summarize_post",
       main_text:clickData.selectionText
     }, function(response) {
     });
   }  
 }
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  // standard element communication respondence
+  // send request to popup and wait for response
+  if (request.contentScriptQuery == "contentPostData") {
+    
+    let headers = new Headers()
+    headers.append("Content-Type", "application/json");
+    headers.append("x-api-key", request.key);
+
+    let request_json = {
+      method: request.type,
+      headers:headers,
+      body: JSON.stringify(request.data)
+    };
+
+    let req = new Request(request.url,request_json);
+    console.log(request)
+    console.log(req);
+    fetch(req)
+      .then(response => response.json())
+      .then(response => sendResponse(response))
+      .catch(error => console.log('Error:', error));
+    
+  return true;
+  }
+});
 
 // generate random user_id
 function makeid(length) {
@@ -70,3 +104,4 @@ function makeid(length) {
  }
  return result;
 }
+
