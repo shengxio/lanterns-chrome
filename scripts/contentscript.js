@@ -10,6 +10,7 @@ let sysFontSize = "11px";
 let username = "me";
 let text_color = {"user":"green","bot":"purple","sys":"grey"};
 const appIcon = "bot.png";
+const styleDIR = "styles/";
 
 let garbageBin = new Set();
 
@@ -75,7 +76,7 @@ function load_interface(){
     
     // add the dragging functionality for the chat window
     dragElement(document.getElementById("chat-window"));
-    dragElement(document.getElementById("Lanterns-toggle"));
+    dragElement(document.getElementById("Lanterns-main-button"));
 }
 
 // create the overall iframe for the component
@@ -107,7 +108,7 @@ function createUIButton() {
 
     button.className = "content-overlay-button";
     button.title = "Open "+appName;
-    button.id = "Lanterns-toggle";
+    button.id = "Lanterns-main-button";
 
     button.src = chrome.runtime.getURL(appIcon);
     button.addEventListener("click", function() {
@@ -840,13 +841,12 @@ function update_element(element, text){
     element.getElementsByTagName("p")[0].innerHTML = text;
 }
 
-/*
-lanterns api interaction functions
+/* lanterns api interaction functions
 + chat request
 + service requests
 */
 
-// chat api request
+// old chat api request
 function send_to_lanterns(bot_name,text,bot_msg_box,callback){
     // get api_key from storage
     chrome.storage.sync.get(['lantern_key','lantern_url','user_id'], function(result) {
@@ -869,12 +869,86 @@ function send_to_lanterns(bot_name,text,bot_msg_box,callback){
     });
 }
 
-function get_bot
+// chat api request
+function send_chat_request(bot_name,text,bot_msg_box,callback){
+    // get api_key from storage
+    chrome.storage.sync.get(['lantern_key','lantern_url','user_id'], function(result) {
+        let lantern_key = result.lantern_key;
+        let lantern_url = result.lantern_url+"/v1/bots";
+        let user_id = result.user_id;
+        
+        // setup request body
+        let data = {
+            "botname": bot_name,
+            "bot_id": bot_id,
+            "text": text,
+            "user_id": user_id,
+            "rev": appVersion,
+            "timestamp": new Date().toISOString(),
+            "request":"chat"
+        };
+        // send request through background script
+        post_data(lantern_url,lantern_key,data,bot_msg_box,callback);
+    });
+}
 
-// generic api service request
+// get the list of bots from lanterns
+function get_bots(callback){
+    chrome.storage.sync.get(['lantern_key','lantern_url','user_id'], function(result) {
+        let lantern_key = result.lantern_key;
+        let lantern_url = result.lantern_url+"/v1/bots";
+        let user_id = result.user_id;
+        
+        // setup request body
+        let data = {
+            "user_id": user_id,
+            "rev": appVersion,
+            "request":"get bots"
+        };
+        // send request through background script
+        post_data(lantern_url,lantern_key,data,callback);
+    });
+}
 
-/* 
-Reader environment extrapolation functions
+// get the list of services from lanterns
+function get_services(callback){
+    chrome.storage.sync.get(['lantern_key','lantern_url','user_id'], function(result) {
+        let lantern_key = result.lantern_key;
+        let lantern_url = result.lantern_url+"/v1/bots";
+        let user_id = result.user_id;
+        
+        // setup request body
+        let data = {
+            "user_id": user_id,
+            "rev": appVersion,
+            "request":"get services"
+        };
+        // send request through background script
+        post_data(lantern_url,lantern_key,data,callback);
+    });
+}
+
+// service api request
+function send_service_request(service_name,text,callback){
+    chrome.storage.sync.get(['lantern_key','lantern_url','user_id'], function(result) {
+        let lantern_key = result.lantern_key;
+        let lantern_url = result.lantern_url+"/v1/bots";
+        let user_id = result.user_id;
+        
+        // setup request body
+        let data = {
+            "service_name": service_name,
+            "text":text,
+            "user_id": user_id,
+            "rev": appVersion,
+            "request":"service"
+        };
+        // send request through background script
+        post_data(lantern_url,lantern_key,data,callback);
+    });
+}
+
+/* Reader environment extrapolation functions
 The following function extrapolate the environment of the reader includes
 - links
 - images
@@ -1135,8 +1209,7 @@ function createPanel(elements){
     return panel;
 }
 
-/* 
-Storage functions
+/* Storage functions
 the following functions are used to get and set variables in the storage
 
 + getFromStorage(key)
