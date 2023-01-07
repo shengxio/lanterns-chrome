@@ -4,8 +4,7 @@
 let appName = "Lanterns";
 let appVersion = "0.1.1";
 let appDescription = "Lanterns in-browser";
-let botname = "Nancy";
-let bot_id = "101";
+let bot_id = "Nancy";
 let sysFontSize = "11px";
 let username = "me";
 let text_color = {"user":"green","bot":"purple","sys":"grey"};
@@ -193,7 +192,7 @@ function createChatBox(){
     windowHeaderTitle.style.cursor = "move";
     windowHeaderTitle.style.fontSize = sysFontSize;
 
-    let windowHeaderTitleText = document.createTextNode(botname);
+    let windowHeaderTitleText = document.createTextNode(bot_id);
     windowHeaderTitle.appendChild(windowHeaderTitleText);
 
     let windowHeaderClose = document.createElement("span");
@@ -301,7 +300,7 @@ function createChatBox(){
             windowBody.appendChild(createChatMessage(text, text_color["user"],"right"));
             
             let bot_msg_box = createChatMessage("thinking...", text_color["bot"],"left")
-            send_to_lanterns(botname,text,bot_msg_box,update_element);
+            send_to_lanterns(bot_id,text,bot_msg_box,update_element);
             
             windowBody.appendChild(bot_msg_box);
             
@@ -847,7 +846,7 @@ function update_element(element, text){
 */
 
 // old chat api request
-function send_to_lanterns(bot_name,text,bot_msg_box,callback){
+function send_to_lanterns(bot_id,text,bot_msg_box,callback){
     // get api_key from storage
     chrome.storage.sync.get(['lantern_key','lantern_url','user_id'], function(result) {
         let lantern_key = result.lantern_key;
@@ -856,7 +855,6 @@ function send_to_lanterns(bot_name,text,bot_msg_box,callback){
         
         // setup request body
         let data = {
-            "botname": bot_name,
             "bot_id": bot_id,
             "text": text,
             "user_id": user_id,
@@ -870,7 +868,7 @@ function send_to_lanterns(bot_name,text,bot_msg_box,callback){
 }
 
 // chat api request
-function send_chat_request(bot_name,text,bot_msg_box,callback){
+function send_chat_request(bot_id,text,bot_msg_box,callback){
     // get api_key from storage
     chrome.storage.sync.get(['lantern_key','lantern_url','user_id'], function(result) {
         let lantern_key = result.lantern_key;
@@ -879,7 +877,6 @@ function send_chat_request(bot_name,text,bot_msg_box,callback){
         
         // setup request body
         let data = {
-            "botname": bot_name,
             "bot_id": bot_id,
             "text": text,
             "user_id": user_id,
