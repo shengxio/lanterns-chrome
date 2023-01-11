@@ -10,7 +10,9 @@ $(document).ready(function(){
     // initialize components event triggers
     chrome.storage.sync.get(['user_id'],function(result){
         let user_id_field = document.getElementById("user_id");
-        user_id_field.textContent = result.user_id;
+        if (typeof user_id_field !== 'undefined'){
+            user_id_field.textContent = result.user_id;
+        }
     });
 
     // get api_key and api_url from storage
@@ -46,4 +48,9 @@ $(document).ready(function(){
             console.log(Date.now() + " " + message);
         }
     }
+
+    $("#button-back").click(function(){
+        // window.open("popup.html","_self");
+        window.history.back();
+    });
 });
