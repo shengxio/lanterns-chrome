@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "@types/chrome": "^0.0.208",
+    "@types/jquery": "^3.5.16"
+  }
+}
