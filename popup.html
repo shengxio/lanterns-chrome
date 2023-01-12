@@ -2,63 +2,58 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <!-- build:css styles/popup-vendor.css -->
-    <!-- bower:css -->
-    <!-- endbower -->
-    <!-- endbuild -->
-    <!-- build:css styles/main.css -->
-
-    <!-- endbuild -->
+    <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" /> -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
   </head>
   <body>
-    <!-- build:js scripts/popup-vendor.js -->
-      <!-- bower:js -->
-      <!-- endbower -->
-      <!-- endbuild -->
-
-      <!-- build:js scripts/popup.js -->
-
-      <!-- endbuild -->
-
-    <!-- header -->
     <script src="scripts/jquery-3.6.0.js"></script>
     <script src="scripts/bootstrap.min.js"></script>
-    <script src="scripts/popup.js"></script>
+    <script src="scripts/popup.js" type="module"></script>
 
-    <!--title-->
-    <h1>Ulai for Chrome</h1>
-    <!--user login-->
-    <div class="container">
-      <div class="row">
-        <div class="col-md-6">
-          <div class="form-group">
-            <label for="email">Email address:</label>
-            <input type="email" class="form-control" id="email">
-          </div>
-          <div class="form-group">
-            <label for="pwd">Password:</label>
-            <input type="password" class="form-control" id="pwd">
-          </div>
-          <div class="checkbox">
-            <label><input type="checkbox"> Remember me</label>
-          </div>
-          <button type="submit" class="btn btn-default">Submit</button>
-          <button type="submit" class="btn btn-default">Register</button>
-        </div>
+    <style type="text/css">
+      /* @import url("styles/main.css"); */
+      @import url("styles/popup.css");
+    </style>
+    
+    <div class="popup">
+      <!-- header -->
+      <div id = "popup-header">
+        <!-- <img id="logo" src="images/lanterns.png" alt="Lanterns" width="50" height="50"> -->
+        <span id="logo" class="material-symbols-outlined">light</span>
       </div>
-    </div>
+      <!-- end header -->
+      
+      <div class="popup-divider"></div>
 
-    
+      <!--body-->
+      <div class="popup-body">
+        <!-- statement -->
+        <h3 id="statement">Welcome to Lanterns</h3>
+        
+        <div class="popup-text-prompt">
+          User ID: <span id="user-id"></span><br>
+          Server status: <span id="server-status"></span>
+        </div>
 
-    
-    <!--footer-->
-    <div class="footer">
-      <!--option page button-->
-      <button href="#" id="open_options" class="popup-button">Options</button>
-      <!--settings page button-->
-      <button href="#" id="open_settings" class="popup-button">Settings</button>
+        <button href="#" id="open_options" class="popup-button">Options</button>
+        <button href="#" id="open_feedback" class="popup-button">Feedback</button>
+        <button href="#" id="join_community" class="popup-button">Community</button>
+        <button href="#" id="open_updates" class="popup-button">Updates and FAQ</button>        
+        
+      </div>
+      <!--end body-->
+
+      <div class="popup-divider"></div>
+
+      <!--footer-->
+      <div class="popup-footer">
+        <p id="copyright" class="popup-footer-text">@2023 by lanterns.fun v
+          <spane id="version"></span>
+        </p>
+      </div>
+      <!-- end footer -->
+
     </div>
     
-    <!-- end footer -->
   </body>
 </html>

@@ -2,15 +2,31 @@
 
 // upon user click of lanterns icon
 $(document).ready(function(){
+    // get app version number from manifest
+    let app_data = chrome.runtime.getManifest();
+    $("#version").text(app_data.version);
 
     // open lanterns options page
     $("#open_options").click(function(){
-        window.open("options.html","_self");
+        window.open("./pages/options.html","_self");
     });
 
-    // open lanterns options page
-    $("#open_settings").click(function(){
-        window.open("pages/settings.html","_self");
+    // open lanterns feedback page (google form)
+    $("#open_feedback").click(function(){
+        window.open("https://forms.gle/X9SqxWQnvbzoggH76");
     });
+
+    // open lanterns discord community
+    $("#join_community").click(function(){
+        // open discord community invite link in new tabs
+        window.open("https://discord.gg/VZzaVqBB9J");
+    });
+
+    // open lanterns updates and frequently asked questions page
+    $("#open_updates").click(function(){
+        window.open("https://www.lanterns.fun");
+
+    });
+
     
 });
