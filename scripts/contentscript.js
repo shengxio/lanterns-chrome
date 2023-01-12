@@ -8,7 +8,7 @@ let bot_id = "Nancy";
 let sysFontSize = "11px";
 let username = "me";
 let text_color = {"user":"green","bot":"purple","sys":"grey"};
-const appIcon = "bot.png";
+const appIcon = "./images/logo_128.png";
 const styleDIR = "styles/";
 
 let garbageBin = new Set();

@@ -1,21 +1,21 @@
 {
   "manifest_version": 3,
-  "name": "chatter",
-  "version": "1.3.3",
-  "description": "A chrome extension for user text chatter.",
+  "name": "Lanterns",
+  "version": "1.3.5",
+  "description": "A chrome extension for user online content moderation.",
   "icons": {
-    "16": "images/bot16.png",
-    "32": "images/bot32.png",
-    "48": "images/bot48.png",
-    "64": "images/bot64.png",
-    "128": "images/bot128.png"
+    "16": "images/logo_16.png",
+    "32": "images/logo_32.png",
+    "48": "images/logo_48.png",
+    "64": "images/logo_64.png",
+    "128": "images/logo_128.png"
   },
   "web_accessible_resources": [{
-    "resources":["images/bot16.png", "images/bot128.png"],
+    "resources":["images/logo_16.png", "images/logo_128.png"],
     "matches": ["https://*/*", "http://*/*"]
   },
   {
-    "resources":["bot.png"],
+    "resources":["logo_160.png"],
     "matches": ["https://*/*", "http://*/*"]
   }
 ],
@@ -42,7 +42,7 @@
   ],
   "action":{
     "default_icon": {
-      "128":"images/bot128.png"
+      "128":"images/logo_128.png"
     },
     "default_title": "lanterns.fun",
     "default_popup": "popup.html"
