@@ -10,6 +10,9 @@ $(document).ready(function(){
         $("#user_id").text(result.user_id);
         console.log(result.user_id);
     });
+
+    // get api server status
+    
     
     // open lanterns options page
     $("#open_options").click(function(){

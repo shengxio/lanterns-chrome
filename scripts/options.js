@@ -14,9 +14,9 @@ $(document).ready(function(){
     // get api_key and api_url from storage
     chrome.storage.sync.get(['lantern_key'], function(result) {
         if(typeof result.lantern_key !== 'undefined'){
-            $("#saved_api_key").text(result.lantern_key);
+            $("#masked_api_key").text(maskKey(result.lantern_key));
         }else{
-            $("#saved_api_key").text("no saved latnerns_key");
+            $("#masked_api_key").text("no saved latnerns_key");
         }
     });
 
@@ -26,16 +26,22 @@ $(document).ready(function(){
         chrome.storage.sync.set({
             lantern_key:key_value
         },function (){
-            $("#saved_api_key").text(key_value);
+            $("#masked_api_key").text(maskKey(key_value));
         });
     });
 
     // copy user entered api_key
-    $("#saved_api_key").click(function(){
-        var copyText = $("#saved_api_key").val();
-        navigator.clipboard.writeText(copyText).then(function() {
-            $("#notification_api_key").text("key copied");
-        });        
+    $("#masked_api_key").click(function(){
+        chrome.storage.sync.get(['lantern_key'], function(result) {
+            
+            if(typeof result.lantern_key !== 'undefined'){
+                navigator.clipboard.writeText(result.key).then(function() {
+                    showNotification("api key copied to clipboard");
+                });
+            }else{
+                showNotification("no saved api key");
+            }
+        });       
     });
 
     // utility functions
@@ -49,3 +55,28 @@ $(document).ready(function(){
         window.history.back();
     });
 });
+
+// a function to mask the api key
+function maskKey(key){
+    var masked_key = key.substring(0,4) + "*".repeat(key.length-8) + key.substring(key.length-4,key.length);
+    return masked_key;
+}
+
+// briefly add a notification overlay at the top of the page for 3 seconds
+function showNotification(message){
+    let notification = document.createElement("div");
+    notification.id = "notification";
+    notification.className = "popup-notification";
+    notification.textContent = message;
+    
+    // let text = document.createElement("p");
+    // text.textContent = message;
+    // text.style.color = "#888";
+    
+    // $("#notification").append(text);
+    $("#options-header").append(notification);
+
+    setTimeout(function(){
+        $("#notification").remove();
+    },2500);
+}
