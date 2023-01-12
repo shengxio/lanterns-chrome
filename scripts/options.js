@@ -39,14 +39,13 @@ $(document).ready(function(){
     });
 
     // utility functions
-    function sysLog(message){
-        if (debug) {
-            console.log(Date.now() + " " + message);
-        }
-    }
+    // function sysLog(message){
+    //     if (debug) {
+    //         console.log(Date.now() + " " + message);
+    //     }
+    // }
 
     $("#button-back").click(function(){
-        // window.open("popup.html","_self");
         window.history.back();
     });
 });
