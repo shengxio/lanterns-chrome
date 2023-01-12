@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "chatter",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "A chrome extension for user text chatter.",
   "icons": {
     "16": "images/bot16.png",
@@ -40,9 +40,6 @@
     "https://lpbebayffa.execute-api.us-east-1.amazonaws.com/alpha-seed/*",
     "https://d4afdjgzee.execute-api.us-east-1.amazonaws.com/v1/*"
   ],
-  "options_ui": {
-    "page": "options.html"
-  },
   "action":{
     "default_icon": {
       "128":"images/bot128.png"
