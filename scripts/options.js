@@ -2,8 +2,9 @@
 
 $(document).ready(function(){
     // Options script starts
-    // setup variables
-    var debug = true;
+    // get app version number from manifest
+    let app_data = chrome.runtime.getManifest();
+    $("#version").text(app_data.version);
 
     // initialize components event triggers
     chrome.storage.sync.get(['user_id'],function(result){
