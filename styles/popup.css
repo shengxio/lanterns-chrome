@@ -4,17 +4,14 @@
     height: auto;
     background: #fff;
     border: 1px solid #ccc;
-    border-radius: 3px;
-    padding: 20px;
-    margin: 0 auto;
+    border-radius: 5px;
+    padding: 10px;
     display: block;
-    margin-top: 20px;
 }
 
 /* popup button defition */
 .popup-button {
     width: 100%;
-
     margin-top: 10px;
     margin-bottom: 10px;
     padding-top: 10px;
@@ -54,14 +51,6 @@
     color: #888;
 }
 
-/* google logo alignment */
-#g-logo {
-    margin-right: 10px;
-    display: inline;
-    vertical-align: middle;
-    background-color: transparent;
-}
-
 /* popup divider */
 .popup-divider {
     background-color: #e5e5e5;
@@ -96,10 +85,18 @@
     margin-bottom: 20px;
 }
 
+/* popup header */
+.popup-header {
+    margin-top: auto;
+    text-align: center;
+    display: block;
+}
+
 /* popup footer */
 .popup-footer {
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin-top: auto;
+    text-align: center;
+    display: block;
 }
 
 /* popup footer text */
@@ -136,4 +133,47 @@
 .input-field:focus {
     outline: none;
     border: 1px solid #2f5876;
+}
+
+/* popup notification field */
+.popup-notification {
+    width: 88%;
+    height: 30px;
+    position:fixed;
+    z-index: 999;
+    border-radius: 5px;
+    margin:auto;
+
+    background-color: #888;
+    opacity: 50%;
+    color: #fff;
+    padding: 5px;
+    text-align: center;
+    vertical-align: middle;
+    box-sizing: border-box;
+    transition: ease-in-out .3s;
+
+    display:flex;
+}
+
+/* google logo alignment */
+#g-logo {
+    margin-right: 10px;
+    display: inline;
+    vertical-align: middle;
+    background-color: transparent;
+}
+
+/* masked api key field */
+#masked_api_key {
+    width: 100%;
+    height: 30px;
+    background-color: #888;
+    color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+    box-sizing: border-box;
+    margin: auto;
+    cursor: copy;
 }
