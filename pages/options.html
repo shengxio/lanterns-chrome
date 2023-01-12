@@ -6,44 +6,52 @@
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css styles/main.css -->
-    <link href="styles/main.css" rel="stylesheet">
-    <link href="styles/option.css" rel="stylesheet">
-    <script src="scripts/jquery-3.6.0.js"></script>
-    <script src="scripts/bootstrap.min.js"></script>
+    <link href="../styles/main.css" rel="stylesheet">
+
+    <script src="../scripts/jquery-3.6.0.js"></script>
+    <script src="../scripts/bootstrap.min.js"></script>
     <!-- endbuild -->
   </head>
   <body>
-    <h1>Lanterns.fun - Options</h1>
-    
-    <!-- build:js scripts/options-vendor.js -->
-    <!-- bower:js -->
-    <!-- endbower -->
-    <!-- endbuild -->
-
     <!-- build:js scripts/options.js -->
-    <script src="scripts/options.js"></script>
+    <script src="../scripts/options.js"></script>
+    <style type="text/css">
+      /* @import url("styles/main.css"); */
+      @import url("../styles/popup.css");
+    </style>
     <!-- endbuild -->
-    <hr class="option-divider">
-    <div id = "" class = "option-api">
-      <p>client id: <span id="user_id"></span></p>
-      <p>api key: <input id="api_key" class="option-text-input" type="text" value="">
-        <p id="saved_api_key" class = "option-key">none</p><p class="option-notification" id="notification_api_key"></p>
-      </p>
+
+    <div class="popup">
+      <!-- header -->
+      <div id = "popup-header">
+        <img id="logo" src="../images/logo_640.png" alt="Lanterns">
+        <!-- <span id="logo" class="material-symbols-outlined">light</span> -->
+      </div>
+      <!-- end header -->
       
-      <button id="save_api_key" type="button" class = "option-button">save api configuration</button>
-    </div>
-    <hr class="option-divider">
+      <div class="popup-divider"></div>
 
-    <div>
-      <p>Debug:
-        <input href="#" type="checkbox" id="toggle_debug">
-      </p>
-      <p>bot status: <span id="api-status-bot"></span></p>
-      <p>services status: <span id="api-status-service"></span></p>
-    </div>
+      <!--body-->
+      <div id = "" class = "option-api">
+        <!-- <p>client id: <span id="user_id"></span></p> -->
+        <p>api key: <input id="api_key" class="input-field" type="text" value="api key">
+          <p id="saved_api_key" class = "option-key">none</p><p class="option-notification" id="notification_api_key"></p>
+        </p>
+        
+        <button id="save_api_key" class = "popup-button">save api key</button>
+      </div>
+      <hr class="option-divider">
 
-    <div class = "footer">
-      <button id="button-back">Go Back</button>
+      <div class="popup-divider"></div>
+
+      <!--footer-->
+      <div class="popup-footer">
+        <button id="button-back" class="popup-button">Go Back</button>
+        <p id="copyright" class="popup-footer-text">@2023 by lanterns.fun v
+          <spane id="version"></span>
+        </p>
+      </div>
+      <!-- end footer -->
     </div>
     
   </body>

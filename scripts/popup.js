@@ -5,7 +5,12 @@ $(document).ready(function(){
     // get app version number from manifest
     let app_data = chrome.runtime.getManifest();
     $("#version").text(app_data.version);
-
+    // initialize components event triggers
+    chrome.storage.sync.get(['user_id'],function(result){
+        $("#user_id").text(result.user_id);
+        console.log(result.user_id);
+    });
+    
     // open lanterns options page
     $("#open_options").click(function(){
         window.open("./pages/options.html","_self");
