@@ -69,10 +69,6 @@ function showNotification(message){
     notification.className = "popup-notification";
     notification.textContent = message;
     
-    // let text = document.createElement("p");
-    // text.textContent = message;
-    // text.style.color = "#888";
-    
     // $("#notification").append(text);
     $("#options-header").append(notification);
 

@@ -21,7 +21,7 @@ $(document).ready(function(){
 
     // open lanterns feedback page (google form)
     $("#open_feedback").click(function(){
-        window.open("https://forms.gle/X9SqxWQnvbzoggH76");
+        window.open("https://forms.gle/X8KqwR9Qcaw21rLw7");
     });
 
     // open lanterns discord community
