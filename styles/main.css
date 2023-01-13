@@ -10,6 +10,15 @@ h1 {
     font-size: 22px;
     font-weight: 400;
 }
+p {
+    font-family: "Open Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: left;
+    vertical-align: top;
+    white-space: nowrap;
+}
 
 
 .spinner-wrapper{
