@@ -15,10 +15,18 @@ chrome.runtime.onConnect.addListener(function(port) {
 chrome.runtime.onInstalled.addListener(function() {
   // initialize user_id and lanterns api endpoint url
   let user_id = makeid(15);
+  let appData = chrome.runtime.getManifest();
+  let api_url = "https://d4afdjgzee.execute-api.us-east-1.amazonaws.com"
+  let api_key = "MLYVxBi4MD3491nltCeiF47nxrVW8eir9Bb3lG74"
+  let base_header = new Headers()
+
+  base_header.append("Content-Type", "application/json");
+  base_header.append("x-api-key", api_key);
+
   chrome.storage.sync.set({
     user_id:user_id,
-    lantern_url:"https://d4afdjgzee.execute-api.us-east-1.amazonaws.com",
-    lantern_key:"MLYVxBi4MD3491nltCeiF47nxrVW8eir9Bb3lG74",
+    api_url:api_url,
+    api_key:api_key,
     title:"Response section:",
     last_timestamp: new Date(),
     memory: {
@@ -27,72 +35,65 @@ chrome.runtime.onInstalled.addListener(function() {
       "videos": [],
       "text": new Set(),
       "title": ""
-    } 
+    },
+    app_data:appData,
+    base_header: base_header
   });
 
-  // initialize the context menu item send to lamp
-  let contextMenuItem = {
-    "id":"summarize_post",
-    "title": "summarie post",
-    "contexts": ["selection"]
-  };
-  chrome.contextMenus.create(contextMenuItem);
-  chrome.contextMenus.onClicked.addListener(onClickHandler);
+
 });
 
 // initialize the unser uninstallation event survey.
 chrome.runtime.onSuspend.addListener(function() {
   // prompt user to fill in the survey
-  // chrome.tabs.create({url: "https://discord.gg/a2M3A56YmP"});
+  chrome.tabs.create({url: "https://forms.gle/4Mwvoc1FXNoUmJQH8"});
 });
 
 chrome.runtime.onUpdateAvailable.addListener(function() {
-  // prompt user to update application.
-  // prompt user for update to the latest application version.
+  // Send a message to the popup window to update the UI
 });
 
-// chrome context menu click handler
-chrome.contextMenus.onClicked.addListener(onClickHandler);
-// context menu click handler
-function onClickHandler(clickData) {
-  chrome.storage.sync.set({main_text:clickData.selectionText});
-
-  // if popup is open, send text to lamp
-  if (popup_open) {
-    chrome.runtime.sendMessage({
-      type:"summarize_post",
-      main_text:clickData.selectionText
-    }, function(response) {
-    });
-  }  
-}
-
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  // standard element communication respondence
+
   // send request to popup and wait for response
-  if (request.contentScriptQuery == "contentPostData") {
-    
-    let headers = new Headers()
-    headers.append("Content-Type", "application/json");
-    headers.append("x-api-key", request.key);
-
+  chrome.storage.sync.get(["base_header","api_url","user_id"],function(data){
     let request_json = {
-      method: request.type,
-      headers:headers,
-      body: JSON.stringify(request.data)
-    };
+      headers:data.base_header,
+    }
+    if (request.contentScriptQuery == "getBots") {
+      request_json.method = "GET"
+  
+    } else if (request.contentScriptQuery == "getChats") {
+      request_json.method = "GET"
+      request.data.user_id = data.user_id
+      request_json.body = JSON.stringify(request.data)
+      
+    } else if (request.contentScriptQuery == "getChatString") {
+      request_json.method = "GET"
+      request.data.user_id = data.user_id
+      request_json.body = JSON.stringify(request.data)  
+      
+    } else if (request.contentScriptQuery == "postChat") {
+      request_json.method = "POST"
+      request.data.user_id = data.user_id
+      request_json.body = JSON.stringify(request.data)
+    } else if(request.contentScriptQuery == "postService"){
+      request_json.method = "POST"
+      request.data.user_id = data.user_id
+      request_json.body = JSON.stringify(request.data)
+    }
 
-    let req = new Request(request.url,request_json);
-    console.log(request)
-    console.log(req);
+    let req = new Request(data.api_url,request_json);
+
     fetch(req)
       .then(response => response.json())
       .then(response => sendResponse(response))
       .catch(error => console.log('Error:', error));
-    
-  return true;
-  }
+
+    });
+  
 });
+
 
 // generate random user_id
 function makeid(length) {
@@ -104,4 +105,3 @@ function makeid(length) {
  }
  return result;
 }
-
