@@ -1,7 +1,6 @@
 'use strict';
 // bootstrap user active tab startup
 
-let bot_id = "Nancy";
 let username = "me";
 let text_color = {"user":"green","bot":"purple","sys":"grey"};
 
@@ -57,34 +56,18 @@ function appButton() {
     button.src = chrome.runtime.getURL(appIcon);
     button.id = "Lanterns-app-button";
     button.className = "app-button";
-    button.title = "Open Lanterns";
-    // button.style.width = "50px";
-    // button.style.height = "50px";
-    // button.style.position = "fixed";
-    // button.style.bottom = "100px";
-    // button.style.right = "100px";
-    // button.style.zIndex = "2147483647";
-    // button.style.borderRadius = "50%";
-    
+    button.title = "Open Lanterns";    
 
     button.addEventListener("click", function() {
         // toggle the main panel
         let main = document.getElementById("lanterns-main-menu");
         if(main){
             main.style.display = (main.style.display == "none") ? "block" : "none";
+            console.log("Lanterns main menu toggled.");
         }
+        console.log("clicked Lanterns app button.")
 
     }, false);
-
-    // button.addEventListener("mouseover", function() {
-    //     // highlight the button
-    //     button.style.boxShadow = "0px 0px 10px 10px rgba(0,0,0,0.5)";
-    // }, false);
-
-    // button.addEventListener("mouseout", function() {
-    //     // remove the button highlight
-    //     button.style.boxShadow = "none";
-    // }, false);
 
     button = dragElement(button);
 
@@ -199,7 +182,7 @@ the following functions are used to manipulate the UI elements
 // toggle the chat window
 function toggleElement(element){
     if(element){
-        element.hidden = !element.hidden;
+        element.style.display = (element.style.display == "none") ? "block" : "none";
     }
 }
 
@@ -304,7 +287,7 @@ function createMainMenu(){
     // });
 
     let mainMenu = createPanel("main menu",body,"");
-    mainMenu.id = "main-menu";
+    mainMenu.id = "lanterns-main-menu";
 
     return mainMenu;
 }
