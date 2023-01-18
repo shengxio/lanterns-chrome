@@ -12,19 +12,7 @@ var appComponents = {}
 main();
 
 function main(){
-    // initialize the user preferences specified in the options page
-    init_spec();
-
-    // load interface
-    load_interface();
-
-}
-
-// main app stream ends here.
-
-// initialize the user specified preferences
-function init_spec(){
-    // maybe add app style here.
+    // add app style here.
     addStyle(styleDIR);
 
     // get the user preferences from the options page
@@ -33,23 +21,24 @@ function init_spec(){
         appComponents["api_key"] = data.api_key;
         appComponents["api_url"] = data.api_url;
         appComponents["user_id"] = data.user_id;
+
+        // create the main menu
+        appComponents["main-menu"] = createMainMenu();
+        appComponents["button"] = appButton();
+
+        document.body.appendChild(appComponents["main-menu"]);
+        document.body.appendChild(appComponents["button"]);
+
         getBots();
         appComponents["services"] = getServices();
-
-        load_interface();
+        
+        console.log("Lanterns loaded.")
 
     })
+
 }
 
-// load interface
-function load_interface(){
-
-    document.body.appendChild(appComponents["main-menu"]);
-    document.body.appendChild(appComponents["button"]);
-    
-    console.log("Lanterns loaded.")
-    
-}
+// main app stream ends here.
 
 // create the an image button
 function appButton() {
@@ -62,20 +51,16 @@ function appButton() {
 
     button.addEventListener("click", function() {
         // toggle the main panel
-
         let main = document.getElementById("lanterns-main-menu");
         if(main){
             main.style.display = (main.style.display == "none") ? "block" : "none";
-            console.log("Lanterns main menu toggled.");
         }
-        console.log("clicked Lanterns app button.")
 
     }, false);
 
     button = dragElement(button);
 
     return button;
-    
 }
 
 // add app style content here
@@ -427,7 +412,7 @@ function getBots(){
                         bodyEntry.onclick = function(){
                             console.log(bot.name + " clicked")
                         }
-                        mainMenuBody?.append(bodyEntry);
+                        mainMenuBody?.appendChild(bodyEntry);
                     }
                 });
             }
