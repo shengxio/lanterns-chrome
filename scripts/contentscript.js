@@ -47,8 +47,8 @@ function load_interface(){
     
     appComponents["button"] = appButton()
     appComponents["main-menu"] = createMainMenu()
-    appComponents["chat-menu"] = createChatMenu()
-    appComponents["chat-window"] = createChatWindow()
+    // appComponents["chat-menu"] = createChatMenu()
+    // appComponents["chat-window"] = createChatWindow()
 
     document.body.appendChild(appComponents["main-menu"]);
     document.body.appendChild(appComponents["button"]);
