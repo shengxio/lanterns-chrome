@@ -38,3 +38,28 @@ $(document).ready(function(){
 
     
 });
+
+// get server status
+function getStatus(){
+    $.ajax({
+        url: "https://api.lanterns.fun/status",
+        type: "GET",
+        success: function(data){
+
+            // turn server_status componet green if server is up
+            if(data.status == "up"){
+                $("#server_status").css("color","green");
+            }
+            // turn server_status componet red if server is down
+            else{
+                $("#server_status").css("color","red");
+            }
+
+            console.log(data);
+            $("#server_status").text(data.status);
+        },
+        error: function(error){
+            console.log(error);
+        }
+    });
+}

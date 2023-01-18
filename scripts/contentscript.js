@@ -266,29 +266,38 @@ function dragElement(element) {
 
 // create a standard panel with header, body and footer
 function createMainMenu(){
-    let body = document.createElement("div");    
+    let body = document.createElement("div"); 
+    body.id = "bots-main-menu-body";
+    body.className = "bots-panel-body";
 
-    // getBots().then(bots => {
-    //     let botList = document.createElement("div");
-    //     botList.className = "app-panel-body";
-    //     botList.id = "bot-list";
-    //     bots.forEach(bot => {
-    //         let botElement = document.createElement("div");
-    //         botElement.className = "bot-element";
-    //         botElement.textContent = bot.name;
-    //         botElement.onclick = function(){
-    //             // toggleElement(panel);
-    //             toggleElement(document.getElementById("lanterns-chat-window"));
-    //         }
-    //         botList.appendChild(botElement);
-    //     });
-    //     panel.appendChild(botList);
-    // });
-
-    let mainMenu = createPanel("main menu",body,"");
+    let mainMenu = createPanel("main menu",body);
     mainMenu.id = "lanterns-main-menu";
 
     return mainMenu;
+}
+
+// create panel entry
+function createEntry(title,description,icon){
+    let entry = document.createElement("div");
+    entry.className = "app-panel-body-entry";
+
+    // let entryIcon = document.createElement("img");
+    // entryIcon.className = "app-panel-body-entry-icon";
+    // entryIcon.src = "data:image/png;base64, "+icon;
+
+    let entryTitle = document.createElement("div");
+    entryTitle.className = "app-panel-body-entry-title";
+    entryTitle.textContent = title;
+
+    let entryDescription = document.createElement("div");
+    entryDescription.className = "app-panel-body-entry-description";
+    entryDescription.textContent = description;
+
+    entry.appendChild(entryTitle);
+    entry.appendChild(entryDescription);
+
+    return entry;
+
 }
 
 // create a standard panel with header, body and footer
@@ -394,13 +403,32 @@ function setToStorage(key,value){
 // get the list of bots
 function getBots(){
     // send message to the background script to get the list of bots
-    chrome.runtime.sendMessage({type: "getBots"}, function(response) {
+    chrome.runtime.sendMessage({
+        contentScriptQuery: "getBots",
+        api_key: appComponents.api_key,
+        api_url: appComponents.api_url,
+        resource: "bots"
+    }, function(response) {
         if(response){
             console.log(response);
-            return response;
+            appComponents["bots"] = response.data;
+
+            let mainMenuBody = document.getElementById("bots-main-menu-body");
+            if(mainMenuBody){
+                appComponents["bots"].forEach(bot => {
+                    if(!document.getElementById(bot.name)){
+                        let bodyEntry = createEntry(bot.name,bot.description);
+                        bodyEntry.id = bot.name;
+                
+                        bodyEntry.onclick = function(){
+                            console.log(bot.name + " clicked")
+                        }
+                        mainMenuBody?.append(bodyEntry);
+                    }
+                });
+            }
         }else{
-            console.log("no response");
-            return null;
+            console.log("no response: "+response);
         }
     });
 }
@@ -408,10 +436,15 @@ function getBots(){
 // get the list of services
 function getServices(){
     // send message to the background script to get the list of services
-    chrome.runtime.sendMessage({contentScriptQuery: "getServices"}, function(response) {
+    chrome.runtime.sendMessage({
+        contentScriptQuery: "getServices",
+        api_key: appComponents.api_key,
+        api_url: appComponents.api_url,
+        resource: "services",
+    }, function(response) {
         if(response){
             console.log(response);
-            return response;
+            appComponents["services"] =  response.data;
         }else{
             console.log("no response");
             return null;
@@ -425,6 +458,10 @@ function getChats(bot_id){
     chrome.runtime.sendMessage({
         contentScriptQuery: "getChats",
         bot_id: bot_id,
+        api_key: appComponents.api_key,
+        api_url: appComponents.api_url,
+        user_id: appComponents.user_id,
+        resource: "bots"
     }, function(response) {
         if(response){
             console.log(response);
@@ -439,7 +476,14 @@ function getChats(bot_id){
 // get the chat history
 function getChatString(chat_id){
     // send message to the background script to get the chat history
-    chrome.runtime.sendMessage({contentScriptQuery: "getChatString", chat_id: chat_id}, function(response) {
+    chrome.runtime.sendMessage({
+        contentScriptQuery: "getChatString", 
+        api_key: appComponents.api_key,
+        api_url: appComponents.api_url,
+        user_id: appComponents.user_id,
+        chat_id: chat_id,
+        resource: "chats"
+    }, function(response) {
         if(response){
             console.log(response);
             return response;
@@ -453,7 +497,15 @@ function getChatString(chat_id){
 // send chat message
 function postChat(chat_id, message){
     // send message to the background script to send a chat message
-    chrome.runtime.sendMessage({contentScriptQuery: "postChat", chat_id:chat_id, message: message}, function(response) {
+    chrome.runtime.sendMessage({
+        contentScriptQuery: "postChat",
+        api_key: appComponents.api_key,
+        api_url: appComponents.api_url,
+        user_id: appComponents.user_id,
+        chat_id:chat_id, 
+        message: message,
+        resource: "bots"
+    }, function(response) {
         if(response){
             console.log(response);
             return response;
@@ -467,7 +519,14 @@ function postChat(chat_id, message){
 // send service
 function postService(service_id,content){
     // send content to the background script to send a service
-    chrome.runtime.sendMessage({contentScriptQuery: "postService", service_id:service_id, content: content}, function(response) {
+    chrome.runtime.sendMessage({
+        contentScriptQuery: "postService", 
+        api_key: appComponents.api_key,
+        api_url: appComponents.api_url,
+        user_id: appComponents.user_id,
+        service_id:service_id, 
+        content: content
+    }, function(response) {
         if(response){
             console.log(response);
             return response;

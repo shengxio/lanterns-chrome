@@ -29,72 +29,75 @@ chrome.runtime.onInstalled.addListener(function() {
       "videos": [],
       "text": new Set(),
       "title": ""
-    } 
+    },
+    app_data:appData
   });
 
-  // initialize the context menu item send to lamp
-  let contextMenuItem = {
-    "id":"summarize_post",
-    "title": "summarie post",
-    "contexts": ["selection"]
-  };
-  chrome.contextMenus.create(contextMenuItem);
-  chrome.contextMenus.onClicked.addListener(onClickHandler);
+
 });
 
 // initialize the unser uninstallation event survey.
 chrome.runtime.onSuspend.addListener(function() {
   // prompt user to fill in the survey
-  // chrome.tabs.create({url: "https://discord.gg/a2M3A56YmP"});
+  chrome.tabs.create({url: "https://forms.gle/4Mwvoc1FXNoUmJQH8"});
 });
 
 chrome.runtime.onUpdateAvailable.addListener(function() {
-  // prompt user to update application.
-  // prompt user for update to the latest application version.
-});
-
-// chrome context menu click handler
-chrome.contextMenus.onClicked.addListener(onClickHandler);
-// context menu click handler
-function onClickHandler(clickData) {
-  chrome.storage.sync.set({main_text:clickData.selectionText});
-
-  // if popup is open, send text to lamp
-  if (popup_open) {
-    chrome.runtime.sendMessage({
-      type:"summarize_post",
-      main_text:clickData.selectionText
-    }, function(response) {
-    });
-  }  
-}
+  // Send a message to the popup window to update the UI
+}); 
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  // standard element communication respondence
   // send request to popup and wait for response
-  if (request.contentScriptQuery == "contentPostData") {
-    
-    let headers = new Headers()
-    headers.append("Content-Type", "application/json");
-    headers.append("x-api-key", request.key);
+  let header = new Headers();
+  header.append("Content-Type", "application/json");
+  header.append("x-api-key", request.api_key);
 
-    let request_json = {
-      method: request.type,
-      headers:headers,
-      body: JSON.stringify(request.data)
-    };
-
-    let req = new Request(request.url,request_json);
-    console.log(request)
-    console.log(req);
-    fetch(req)
-      .then(response => response.json())
-      .then(response => sendResponse(response))
-      .catch(error => console.log('Error:', error));
-    
-  return true;
+  let request_json = {
+    headers:header
   }
+  let url = request.api_url +"/"+ request.resource
+
+  if (request.contentScriptQuery == "getBots") {
+    request_json.method = "GET"
+
+  } else if(request.contentScriptQuery == "getServices") {
+    request_json.method = "GET"
+
+  } else if (request.contentScriptQuery == "getChats") {
+    request_json.method = "GET"
+    request.data.user_id = request.user_id
+    request_json.body = JSON.stringify(request.data)
+    
+  } else if (request.contentScriptQuery == "getChatString") {
+    request_json.method = "GET"
+    request.data.user_id = request.user_id
+    request_json.body = JSON.stringify(request.data)  
+    
+  } else if (request.contentScriptQuery == "postChat") {
+    request_json.method = "POST"
+    request.data.user_id = request.user_id
+    request_json.body = JSON.stringify(request.data)
+
+  } else if(request.contentScriptQuery == "postService"){
+    request_json.method = "POST"
+    request.data.user_id = request.user_id
+    request_json.body = JSON.stringify(request.data)
+  }
+
+  let req = new Request(url,request_json);
+
+  (async() =>{
+    await fetch(req)
+      .then(response => response.json()) 
+      .then(function(response){
+        sendResponse(response);
+      })
+      .catch(error => console.log('Error:', error,error.message));
+  })();
+  return true;  // important! do not delete! this is what makes the sending end wait for asynchronous response
+
 });
+
 
 // generate random user_id
 function makeid(length) {
