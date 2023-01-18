@@ -12,9 +12,9 @@ $(document).ready(function(){
     });
 
     // get api_key and api_url from storage
-    chrome.storage.sync.get(['lantern_key'], function(result) {
-        if(typeof result.lantern_key !== 'undefined'){
-            $("#masked_api_key").text(maskKey(result.lantern_key));
+    chrome.storage.sync.get(['api_key'], function(result) {
+        if(typeof result.api_key !== 'undefined'){
+            $("#masked_api_key").text(maskKey(result.api_key));
         }else{
             $("#masked_api_key").text("no saved latnerns_key");
         }
@@ -24,7 +24,7 @@ $(document).ready(function(){
     $("#save_api_key").click(function(){
         var key_value = $("#api_key").val();
         chrome.storage.sync.set({
-            lantern_key:key_value
+            api_key:key_value
         },function (){
             $("#masked_api_key").text(maskKey(key_value));
         });
@@ -32,9 +32,9 @@ $(document).ready(function(){
 
     // copy user entered api_key
     $("#masked_api_key").click(function(){
-        chrome.storage.sync.get(['lantern_key'], function(result) {
+        chrome.storage.sync.get(['api_key'], function(result) {
             
-            if(typeof result.lantern_key !== 'undefined'){
+            if(typeof result.api_key !== 'undefined'){
                 navigator.clipboard.writeText(result.key).then(function() {
                     showNotification("api key copied to clipboard");
                 });

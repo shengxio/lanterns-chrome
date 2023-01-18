@@ -13,7 +13,7 @@
     background-color: #fff;
 
     font-size: 14px;
-    transition:cubic-bezier(0.075, 0.82, 0.165, 1);
+    /* transition:cubic-bezier(0.075, 0.82, 0.165, 1); */
     display: none;
 }
 
@@ -80,6 +80,19 @@
     overflow-y: auto;
 }
 
+/* app panel element */
+.app-panel-element {
+    width: 100%;
+    height: 40px;
+
+    border: #2f5876 1px solid;
+    padding: 5px;
+    border: #2f5876 1px solid;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 0 10px #888;
+}
+
 /* app panel footer */
 .app-panel-footer {
     bottom: 0;
@@ -117,4 +130,48 @@
 .app-button:hover {
     box-shadow: 0px 0px 10px 10px #888;
     cursor: pointer;
+}
+
+/* app button unhover effect */
+.app-button:active {
+    box-shadow: 0px 0px 10px 10px #888;
+    cursor: grabbing;
+}
+
+/* app panel body entry */
+.app-panel-body-entry {
+    width: 100%;
+    height: 40px;
+    border-top: #2f5876 1px solid;
+    border-bottom: #2f5876 1px solid;
+    padding: 5px;
+
+}
+
+/* app panel body entry hover effect */
+.app-panel-body-entry:hover {
+    box-shadow: 0 0 3px #888;
+    cursor: pointer;
+}
+
+/* app panel body entry icon */
+.app-panel-body-entry-icon {
+    width: 30px;
+    height: 30px;
+    float: left;
+    margin-right: 10px;
+}
+
+/* app panel body entry title */
+.app-panel-body-entry-title {
+    width: 100%;
+    height: 30px;
+    float: left;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: "Open Sans", sans-serif;
+    color: #888;
+    text-align: left;
+    vertical-align: middle;
+    line-height: 30px;
 }

@@ -23,7 +23,6 @@ function main(){
     // load interface
     load_interface();
 
-
 }
 
 // main app stream ends here.
@@ -332,16 +331,18 @@ function createPanel(title,body,footer){
     panelBody.appendChild(body);
     panel.appendChild(panelBody);
 
-    let footerDivider = document.createElement("div");
-    footerDivider.className = "app-divider";
+    if(footer){
+        let footerDivider = document.createElement("div");
+        footerDivider.className = "app-divider";
 
-    // create the panel footer
-    let panelFooter = document.createElement("div");
-    panelFooter.id = title + "-footer";
-    panelFooter.className = "app-panel-footer";
-    panelFooter.appendChild(footerDivider);
-    panelFooter.textContent = footer;
-    panel.appendChild(panelFooter);
+        // create the panel footer
+        let panelFooter = document.createElement("div");
+        panelFooter.id = title + "-footer";
+        panelFooter.className = "app-panel-footer";
+        panelFooter.appendChild(footerDivider);
+        panelFooter.textContent = footer;
+        panel.appendChild(panelFooter);
+    }    
 
     return panel;
 }
@@ -350,7 +351,7 @@ function createPanel(title,body,footer){
 function createChatMenu(bot_id){
     let body = document.createElement("div");    
 
-    let chatMenu = createPanel(bot_id,body,"");
+    let chatMenu = createPanel(bot_id,body);
     chatMenu.id = "chat-menu";
 
     return chatMenu;
@@ -359,13 +360,11 @@ function createChatMenu(bot_id){
 function createChatWindow(chat_title){
     let body = document.createElement("div");    
 
-    let chatWindow = createPanel(chat_title,body,"");
+    let chatWindow = createPanel(chat_title,body);
     chatWindow.id = "chat-window";
 
     return chatWindow;
-}
-    
-    
+}    
 
 /* Storage functions
 the following functions are used to get and set variables in the storage
