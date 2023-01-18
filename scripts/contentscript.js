@@ -7,12 +7,7 @@ let text_color = {"user":"green","bot":"purple","sys":"grey"};
 const appIcon = "../images/logo_128.png";
 const styleDIR = "../styles/content.css";
 
-var appComponents = {
-    "button": appButton(),
-    "main-menu": createMainMenu(),
-    "chat-menu": createChatMenu(),
-    "chat-window": createChatWindow(),
-}
+var appComponents = {}
 
 main();
 
@@ -33,13 +28,27 @@ function init_spec(){
     addStyle(styleDIR);
 
     // get the user preferences from the options page
-    chrome.storage.sync.get("app_data", function(data) {
+    chrome.storage.sync.get(["app_data","api_key","api_url","user_id"], function(data) {
         appComponents["info"] = data.app_data;
-    });
+        appComponents["api_key"] = data.api_key;
+        appComponents["api_url"] = data.api_url;
+        appComponents["user_id"] = data.user_id;
+        getBots();
+        appComponents["services"] = getServices();
+
+        load_interface();
+
+    })
 }
 
 // load interface
 function load_interface(){
+
+    
+    appComponents["button"] = appButton()
+    appComponents["main-menu"] = createMainMenu()
+    appComponents["chat-menu"] = createChatMenu()
+    appComponents["chat-window"] = createChatWindow()
 
     document.body.appendChild(appComponents["main-menu"]);
     document.body.appendChild(appComponents["button"]);
@@ -59,6 +68,7 @@ function appButton() {
 
     button.addEventListener("click", function() {
         // toggle the main panel
+
         let main = document.getElementById("lanterns-main-menu");
         if(main){
             main.style.display = (main.style.display == "none") ? "block" : "none";
