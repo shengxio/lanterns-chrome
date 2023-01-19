@@ -255,39 +255,16 @@ function dragElement(element) {
 
 // create a standard panel with header, body and footer
 function createMainMenu(){
-    let body = document.createElement("div"); 
-    body.id = "bots-main-menu-body";
-    body.className = "bots-panel-body";
+    let body = document.createElement("iframe");
+    body.src = chrome.runtime.getURL("../pages/bots.html");
+    body.id = "lanterns-main-frame";
 
-    let mainMenu = createPanel("main menu",body);
+    let mainMenu = createPanel("Lanterns",body);
     mainMenu.id = "lanterns-main-menu";
 
     return mainMenu;
 }
 
-// create panel entry
-function createEntry(title,description,icon){
-    let entry = document.createElement("div");
-    entry.className = "app-panel-body-entry";
-
-    // let entryIcon = document.createElement("img");
-    // entryIcon.className = "app-panel-body-entry-icon";
-    // entryIcon.src = "data:image/png;base64, "+icon;
-
-    let entryTitle = document.createElement("div");
-    entryTitle.className = "app-panel-body-entry-title";
-    entryTitle.textContent = title;
-
-    let entryDescription = document.createElement("div");
-    entryDescription.className = "app-panel-body-entry-description";
-    entryDescription.textContent = description;
-
-    entry.appendChild(entryTitle);
-    entry.appendChild(entryDescription);
-
-    return entry;
-
-}
 
 // create a standard panel with header, body and footer
 function createPanel(title,body,footer){
@@ -399,23 +376,9 @@ function getBots(){
         resource: "bots"
     }, function(response) {
         if(response){
-            console.log(response);
             appComponents["bots"] = response.data;
-
-            let mainMenuBody = document.getElementById("bots-main-menu-body");
-            if(mainMenuBody){
-                appComponents["bots"].forEach(bot => {
-                    if(!document.getElementById(bot.name)){
-                        let bodyEntry = createEntry(bot.name,bot.description);
-                        bodyEntry.id = bot.name;
-                
-                        bodyEntry.onclick = function(){
-                            console.log(bot.name + " clicked")
-                        }
-                        mainMenuBody?.appendChild(bodyEntry);
-                    }
-                });
-            }
+            setToStorage("bots",response.data);
+            console.log(response);
         }else{
             console.log("no response: "+response);
         }
