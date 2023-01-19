@@ -1,4 +1,4 @@
-// basic interfaces
+
 
 // upon user click of lanterns icon
 $(document).ready(function(){
