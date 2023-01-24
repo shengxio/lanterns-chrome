@@ -65,8 +65,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
   } else if (request.contentScriptQuery == "getChats") {
     request_json.method = "GET"
-    request.data.user_id = request.user_id
-    request_json.body = JSON.stringify(request.data)
+    url = url+ "?" + new URLSearchParams({
+      user_id: request.user_id,
+      bot_id: request.bot_id
+      // user_id: "test",
+      // bot_id: "Marv"
+    });
     
   } else if (request.contentScriptQuery == "getChatString") {
     request_json.method = "GET"
