@@ -359,7 +359,7 @@ function getFromStorage(key){
 // set variable in the storage to value
 function setToStorage(key,value){
     chrome.storage.sync.set({[key]: value}, function() {
-        console.log('Value is set to ' + value);
+        console.log(key + " is set to " + value);
     });
 }
 

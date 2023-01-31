@@ -132,80 +132,6 @@
     cursor: grabbing;
 }
 
-/* list entry */
-.list-entry {
-    width: 90%;
-    height:auto;
-    display: block;
-    border-top: #888 1px solid;
-    border-bottom: #888 1px solid;
-    padding: 5px;
-    margin-top: 5px;
-    margin-bottom: 5px;
-
-}
-
-/* list entry hover effect */
-.list-entry:hover {
-    box-shadow: 0 0 2px 2px #888;
-    cursor: pointer;
-}
-
-/* list entry left */
-.list-entry-left{
-    /* float: left; */
-    width: 30%;
-    height: auto;
-    text-align: left;
-    vertical-align: middle;
-}
-
-/* list entry right */
-.list-entry-right{
-    /* float: right; */
-    display: inline-block;
-    width: 65%;
-    height: auto;
-    text-align: left;
-}
-
-/*  entry icon */
-.list-entry-icon {
-    display:flex;
-    width: 40px;
-    height: 40px;
-    float: left;
-    display:block;
-    margin-right: 10px;
-    justify-self: center;
-}
-
-
-
-/* list entry title */
-.list-entry-title {
-    width: 100%;
-    height: auto;
-    float: left;
-    font-size: 16px;
-    font-weight: bold;
-    font-family: "Open Sans", sans-serif;
-    color: #888;
-    text-align: left;
-    vertical-align: middle;
-}
-
-/* list entry description */
-.list-entry-description{
-    width: 100%;
-    height: auto;
-    float: left;
-    font-size: 14px;
-    font-family: "Open Sans", sans-serif;
-    color: #888;
-    text-align: left;
-    vertical-align: middle;
-}
 
 /* list panel */
 .list-panel{
@@ -325,6 +251,79 @@
     margin: 0%;
 }
 
+/* list entry */
+.list-entry {
+    width: 90%;
+    height:auto;
+    display: block;
+    border-top: #888 1px solid;
+    border-bottom: #888 1px solid;
+    padding: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+
+}
+
+/* list entry hover effect */
+.list-entry:hover {
+    box-shadow: 0 0 2px 2px #888;
+    cursor: pointer;
+}
+
+/* list entry left */
+.list-entry-left{
+    /* float: left; */
+    width: 30%;
+    height: auto;
+    text-align: left;
+    vertical-align: middle;
+}
+
+/* list entry right */
+.list-entry-right{
+    /* float: right; */
+    display: inline-block;
+    width: 65%;
+    height: auto;
+    text-align: left;
+}
+
+/*  entry icon */
+.list-entry-icon {
+    display:flex;
+    width: 40px;
+    height: 40px;
+    float: left;
+    display:block;
+    margin-right: 10px;
+    justify-self: center;
+}
+
+/* list entry title */
+.list-entry-title {
+    width: 100%;
+    height: auto;
+    float: left;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: "Open Sans", sans-serif;
+    color: #888;
+    text-align: left;
+    vertical-align: middle;
+}
+
+/* list entry description */
+.list-entry-description{
+    width: 100%;
+    height: auto;
+    float: left;
+    font-size: 14px;
+    font-family: "Open Sans", sans-serif;
+    color: #888;
+    text-align: left;
+    vertical-align: middle;
+}
+
 /* list entry delete button */
 .list-entry-delete-button {
     width: 20px;
@@ -340,4 +339,47 @@
 .list-entry-delete-button:hover {
     box-shadow: 0px 0px 2px 2px #888;
     cursor: pointer;
+}
+
+/* list entry delete button active */
+.list-entry-delete-button:active {
+    box-shadow: 0px 0px 2px 2px #333;
+    cursor: grabbing;
+}
+
+/* list entry edit button */
+.list-entry-edit-button {
+    width: 20px;
+    height: 20px;
+    border-radius: 10%;
+    float: right;
+    margin-right: 10px;
+    justify-self: center;
+    vertical-align: middle;
+}
+
+/* list entry edit button hover */
+.list-entry-edit-button:hover {
+    box-shadow: 0px 0px 2px 2px #888;
+    cursor: pointer;
+}
+
+/* list entry edit button active */
+.list-entry-edit-button:active {
+    box-shadow: 0px 0px 2px 2px #333;
+    cursor: grabbing;
+}
+
+/* chat item for the left side of list entry */
+.chat-item{
+    width: 70%;
+    height: auto;
+    font-size: 14px;
+    font-family: "Open Sans", sans-serif;
+    color: #888;
+    text-align: left;
+    vertical-align: middle;
+    padding: 5px;
+    margin: 0%;
+    display: inline-block;
 }
