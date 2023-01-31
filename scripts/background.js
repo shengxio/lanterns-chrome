@@ -57,36 +57,61 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   }
   let url = request.api_url +"/"+ request.resource
 
-  if (request.contentScriptQuery == "getBots") {
+  if (request.contentScriptQuery == "getBots") { // tested
     request_json.method = "GET"
 
-  } else if(request.contentScriptQuery == "getServices") {
+  } else if(request.contentScriptQuery == "getServices") { // tested
     request_json.method = "GET"
+    
+  } else if(request.contentScriptQuery == "postService"){
+    request_json.method = "POST"
+    request.data.user_id = request.user_id
+    request_json.body = JSON.stringify(request.data);
 
-  } else if (request.contentScriptQuery == "getChats") {
+  } else if (request.contentScriptQuery == "getChats") { // tested
     request_json.method = "GET"
     url = url+ "?" + new URLSearchParams({
       user_id: request.user_id,
       bot_id: request.bot_id
-      // user_id: "test",
-      // bot_id: "Marv"
     });
     
-  } else if (request.contentScriptQuery == "getChatString") {
-    request_json.method = "GET"
-    request.data.user_id = request.user_id
-    request_json.body = JSON.stringify(request.data)  
-    
-  } else if (request.contentScriptQuery == "postChat") {
+  } else if (request.contentScriptQuery == "addChat") { // tested
     request_json.method = "POST"
-    request.data.user_id = request.user_id
-    request_json.body = JSON.stringify(request.data)
+    url = url+ "?" + new URLSearchParams({
+      user_id: request.user_id,
+      bot_id: request.bot_id,
+    });
+    request_json.body = JSON.stringify(request.data);
 
-  } else if(request.contentScriptQuery == "postService"){
-    request_json.method = "POST"
-    request.data.user_id = request.user_id
-    request_json.body = JSON.stringify(request.data)
+  } else if (request.contentScriptQuery == "deleteChat") {
+    request_json.method = "DELETE"
+    url = url+ "?" + new URLSearchParams({
+      user_id: request.user_id,
+      bot_id: request.bot_id,
+    });
+    request_json.body = JSON.stringify(request.data);
+  
+  } else if (request.contentScriptQuery == "updateChat") {
+    console.log("update chat:" + request.data);
+    request_json.method = "PUT"
+    url = url+ "?" + new URLSearchParams({
+      user_id: request.user_id,
+      bot_id: request.bot_id
+    });
+    request_json.body = JSON.stringify(request.data);
+    
+
+  }  else if (request.contentScriptQuery == "getQueue") {
+    request_json.method = "GET"
+    url = url+ "?" + new URLSearchParams({
+      chat_id: request.chat_id
+    });
+    request_json.body = JSON.stringify(request.data);
+
   }
+
+  console.log(request_json);
+  console.log(url)
 
   let req = new Request(url,request_json);
 
