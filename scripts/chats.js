@@ -100,21 +100,28 @@ $(document).ready(function(){
         chatItem.className = "chat-item";
         chatItem.textContent = title;
         chatItem.onclick = function(){
-            console.log(chatItem.textContent + " clicked")
-            // send message to content script to open chat
-            chrome.runtime.sendMessage({
-                contentScriptQuery: "openChat",
-                bot_id: botName,
-                // user_id: appComponents.user_id,
-                // api_key: appComponents.api_key,
-                // api_url: appComponents.api_url,
-                // resource: "chats",
-                chat_id: id
-            }, function(response) {
-                if(response){
-                    console.log(response);
+
+            (async () => {
+                console.log(chatItem.textContent + " clicked")
+                // send message to content script to open chat
+                const [tab] = await chrome.tabs.query({active: true, lastFocusedWindow: true});
+                if(tab.id){
+                    let response = await chrome.tabs.sendMessage(tab.id,{
+                        contentScriptQuery: "openChat",
+                        bot_id: botName,
+                        title: title,
+                        chat_id: id
+                    }, function(response) {
+                        if(response){
+                            console.log(response);
+                        }else
+                            console.log("no response");
+                    });
+                }else{
+                    console.log("no tab id")
                 }
-            });
+                
+            })();
         }
 
         // add a delete button to the entry and float it to the right

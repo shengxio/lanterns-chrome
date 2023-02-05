@@ -383,3 +383,126 @@
     margin: 0%;
     display: inline-block;
 }
+
+/* chat frame for hosting the message window */
+.chat-frame{
+    width: 300px;
+    height: 350px;
+    position: fixed;
+    top: 15%;
+    left: 15%;
+    padding: 0%;
+    margin: 0%;
+    border: none;
+    z-index: 2147483647;
+    background-color: transparent;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    /* allow for resizing */
+    resize: vertical;
+}
+
+/* chat frame header */
+.chat-frame-header{
+    top: 0;
+    left: 0;
+    position: absolute;
+    width: 100%;
+    height: 30px;
+    z-index: 2147483647;
+    
+    color: #888;
+    background-color: #fff;
+    border: 1px #333;
+    font-size: 16px;
+    font-weight: bold;
+    font-family: "Open Sans", sans-serif;
+    border-radius: 5px 5px 0 0;
+    border: 1px solid #888;
+
+    text-align: center;
+    vertical-align: middle;
+    line-height: 30px;
+}
+
+/* app panel header on mouse hover */
+.chat-frame-header:hover {
+    cursor: grab;
+}
+
+/* app panel header on mouse down */
+.chat-frame-header:active {
+    cursor: grabbing;
+}
+
+.chat-frame-body {
+    top: 30px;
+    left: 0;
+    right: 0;
+    /* width: 100%; */
+    bottom: 0;
+    position: absolute;
+    overflow: hidden;
+}
+
+/* app panel footer */
+.chat-frame-footer {
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 15%;
+    color: #888;
+    text-align: center;
+    font-size: 16px;
+    position: absolute;
+    clear: both;
+}
+
+.chat-main-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    overflow: hidden;
+}
+
+.chat-frame-page-body{
+    width: 100%;
+    height: 100%;
+    border: none;
+    padding: 0%;
+    margin: 0%;
+    overflow: hidden;
+}
+
+
+/* chat window */
+.chat-input-text{
+    width: 100%;
+    height: 50px;
+    border: 1px solid #888;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #888;
+    font-size: 14px;
+    font-family: "Open Sans", sans-serif;
+    padding: 5px;
+    margin: 0%;
+    resize: none;
+}
+
+/* chat window */
+.chat-message-container{
+    width: 100%;
+    height: auto;
+    border: none;
+    border-radius: 0px;
+    background-color: transparent;
+
+    color: #888;
+    font-size: 14px;
+    font-family: "Open Sans", sans-serif;
+    padding: 5px;
+    margin: 0%;
+    resize: none;
+    overflow-y: auto;
+}

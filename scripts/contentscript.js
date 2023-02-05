@@ -36,6 +36,21 @@ function main(){
 
     })
 
+    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+        if (request.contentScriptQuery == "openChat") {
+            let chatPanel = document.getElementById("lanterns-chat-panel-"+request.chat_id);
+
+            if(chatPanel){
+                // toggle the chat panel
+                chatPanel.style.display = (chatPanel.style.display == "none") ? "block" : "none";
+            }else{
+                // open the chat if it does not exist
+                document.body.appendChild(createChatFrame(request.chat_id,request.bot_id,request.title));
+            }
+        }else{
+            console.log(request);
+        }
+    });
 }
 
 // main app stream ends here.
@@ -72,6 +87,73 @@ function addStyle(fileDIR){
     document.head.appendChild(style);
 }
 
+// create the chat frame
+function createChatFrame(chat_id,bot_id,title){
+    let chatBody = document.createElement("iframe");
+    chatBody.src = chrome.runtime.getURL("../pages/chat-window.html?bot_id="+bot_id+"&chat_id="+chat_id);
+    chatBody.className = "chat-main-frame";
+
+    let chatPanel = createChatFramePanel(bot_id+" - "+title,chatBody);
+    chatPanel.id = "lanterns-chat-panel-"+chat_id;
+
+    chatPanel = dragElement(chatPanel);
+    return chatPanel;
+}
+
+function createChatFramePanel(title,body,footer){
+    // create the panel
+    let panel = document.createElement("div");
+    panel.className = "chat-frame";
+
+    // create the panel header
+    let panelHeader = document.createElement("div");
+    panelHeader.id = title + "-header";
+    panelHeader.className = "chat-frame-header";
+    panelHeader.textContent = title;
+
+    let panelHeaderCloseButton = document.createElement("button");
+    panelHeaderCloseButton.id = title + "-close-button";
+    panelHeaderCloseButton.className = "app-panel-header-button";
+    panelHeaderCloseButton.innerHTML = "X";
+    
+    panelHeaderCloseButton.addEventListener("click",function(){
+        toggleElement(panel);
+    });
+    
+    let headerDivider = document.createElement("div");
+    headerDivider.id = title + "-header-divider";
+    headerDivider.className = "app-divider";
+
+    panelHeader.appendChild(panelHeaderCloseButton);
+    panelHeader.appendChild(headerDivider);
+    panelHeader.addEventListener("mousedown", function(e){
+        dragElement(panel);
+    });
+
+    panel.appendChild(panelHeader);
+
+    // create the panel body
+    let panelBody = document.createElement("div");
+    panelBody.id = title + "-body";
+    panelBody.className = "chat-frame-body";
+    panelBody.appendChild(body);
+    panel.appendChild(panelBody);
+
+    if(footer){
+        let footerDivider = document.createElement("div");
+        footerDivider.className = "app-divider";
+
+        // create the panel footer
+        let panelFooter = document.createElement("div");
+        panelFooter.id = title + "-footer";
+        panelFooter.className = "chat-frame-footer";
+        panelFooter.appendChild(footerDivider);
+        panelFooter.textContent = footer;
+        panel.appendChild(panelFooter);
+    }    
+
+    return panel;
+}
 
 /* Reader environment extrapolation functions
 The following function extrapolate the environment of the reader includes
