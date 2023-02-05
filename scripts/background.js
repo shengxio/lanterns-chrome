@@ -46,7 +46,7 @@ chrome.runtime.onUpdateAvailable.addListener(function() {
   // Send a message to the popup window to update the UI
 }); 
 
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {  
   // send request to popup and wait for response
   let header = new Headers();
   header.append("Content-Type", "application/json");
@@ -60,14 +60,27 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.contentScriptQuery == "getBots") { // tested
     request_json.method = "GET"
 
+  } else if(request.contentScriptQuery == "addBot"){
+  } else if(request.contentScriptQuery == "deleteBot"){
+  } else if(request.contentScriptQuery == "updateBot"){
+  
   } else if(request.contentScriptQuery == "getServices") { // tested
     request_json.method = "GET"
     
-  } else if(request.contentScriptQuery == "postService"){
+  } else if(request.contentScriptQuery == "addService"){
     request_json.method = "POST"
     request.data.user_id = request.user_id
     request_json.body = JSON.stringify(request.data);
 
+  } else if(request.contentScriptQuery == "deleteService"){
+    request_json.method = "DELETE"
+    url = url+ "?" + new URLSearchParams({
+      user_id: request.user_id,
+      service_id: request.service_id
+    });
+    request_json.body = JSON.stringify(request.data);
+  
+  } else if(request.contentScriptQuery == "updateService"){
   } else if (request.contentScriptQuery == "getChats") { // tested
     request_json.method = "GET"
     url = url+ "?" + new URLSearchParams({
@@ -106,10 +119,18 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     url = url+ "?" + new URLSearchParams({
       chat_id: request.chat_id
     });
-    request_json.body = JSON.stringify(request.data);
+    // request_json.body = JSON.stringify(request.data);
 
+  } else if (request.contentScriptQuery == "addQueue") {
+
+  } else if (request.contentScriptQuery == "deleteQueue") {
+
+  } else if (request.contentScriptQuery == "updateQueue") {
+    
   }
 
+  console.log(sender)
+  console.log(request)
   console.log(request_json);
   console.log(url)
 
@@ -123,8 +144,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       })
       .catch(error => console.log('Error:', error,error.message));
   })();
+  
   return true;  // important! do not delete! this is what makes the sending end wait for asynchronous response
-
 });
 
 

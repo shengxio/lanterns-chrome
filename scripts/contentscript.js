@@ -257,6 +257,7 @@ function dragElement(element) {
 function createMainMenu(){
     let body = document.createElement("iframe");
     body.src = chrome.runtime.getURL("../pages/bots.html");
+    body.className = "app-panel-body";
     body.id = "lanterns-main-frame";
 
     let mainMenu = createPanel("Lanterns",body);
@@ -321,25 +322,6 @@ function createPanel(title,body,footer){
 
     return panel;
 }
-
-// create a chat menu
-function createChatMenu(bot_id){
-    let body = document.createElement("div");    
-
-    let chatMenu = createPanel(bot_id,body);
-    chatMenu.id = "chat-menu";
-
-    return chatMenu;
-}
-
-function createChatWindow(chat_title){
-    let body = document.createElement("div");    
-
-    let chatWindow = createPanel(chat_title,body);
-    chatWindow.id = "chat-window";
-
-    return chatWindow;
-}    
 
 /* Storage functions
 the following functions are used to get and set variables in the storage
