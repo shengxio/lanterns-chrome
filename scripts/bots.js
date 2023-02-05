@@ -1,5 +1,3 @@
-
-
 // upon user click of lanterns icon
 $(document).ready(function(){
     // get app version number from manifest
@@ -14,8 +12,6 @@ $(document).ready(function(){
         appComponents["api_url"] = result.api_url;
         appComponents["user_id"] = result.user_id;
         appComponents["bots"] = result.bots;
-
-        console.log(appComponents["bots"])
 
         if(botList){
             appComponents["bots"].forEach(bot => {
