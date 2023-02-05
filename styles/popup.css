@@ -9,6 +9,16 @@
     display: block;
 }
 
+/* popup window title */
+.popup-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    text-align: left;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
 /* popup button defition */
 .popup-button {
     width: 100%;

@@ -30,6 +30,18 @@ $(document).ready(function(){
         });
     });
 
+    // save user entered user_id
+    $("#save_user_id").click(function(){
+        let user_id = $("#user_id_input").val();
+        if(user_id!==undefined && typeof(user_id)==="string" && user_id.length>0){
+            $("#user_id").text(user_id);
+            chrome.storage.sync.set({
+                user_id:user_id
+            },function (){
+            });
+            
+        }
+    });
     // copy user entered api_key
     $("#masked_api_key").click(function(){
         chrome.storage.sync.get(['api_key'], function(result) {
@@ -43,13 +55,6 @@ $(document).ready(function(){
             }
         });       
     });
-
-    // utility functions
-    // function sysLog(message){
-    //     if (debug) {
-    //         console.log(Date.now() + " " + message);
-    //     }
-    // }
 
     $("#button-back").click(function(){
         window.history.back();

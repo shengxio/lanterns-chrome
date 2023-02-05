@@ -33,13 +33,18 @@
 
       <!--body-->
       <div class = "popup-body">
-        <!-- <p>client id: <span id="user_id"></span></p> -->
-        <input id="api_key" class="input-field" type="text" placeholder="enter api key here...">
+        <!-- api key setting area -->
+        <p class="popup-title">API Key</p>
         <!-- show masked api key -->
         <p id="masked_api_key">none</p>
-        
-        
+        <input id="api_key" class="input-field" type="text" placeholder="enter api key here...">
         <button id="save_api_key" class = "popup-button">save api key</button>
+
+        <!-- user id setting area -->
+        <p class="popup-title">User ID</p>
+        <p id="user_id">none</p>
+        <input id="user_id_input" class="input-field" type="text" placeholder="set your user id here...">        
+        <button id="save_user_id" class = "popup-button">update user id</button>
       </div>
 
       <div class="popup-divider"></div>
