@@ -42,7 +42,7 @@ function main(){
 
             if(chatPanel){
                 // toggle the chat panel
-                chatPanel.style.display = (chatPanel.style.display == "none") ? "block" : "none";
+                chatPanel.parentNode?.removeChild(chatPanel);
             }else{
                 // open the chat if it does not exist
                 document.body.appendChild(createChatFrame(request.chat_id,request.bot_id,request.title));
@@ -117,7 +117,8 @@ function createChatFramePanel(title,body,footer){
     panelHeaderCloseButton.innerHTML = "X";
     
     panelHeaderCloseButton.addEventListener("click",function(){
-        toggleElement(panel);
+        // toggleElement(panel);
+        panel.parentNode?.removeChild(panel);
     });
     
     let headerDivider = document.createElement("div");

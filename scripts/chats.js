@@ -106,16 +106,11 @@ $(document).ready(function(){
                 // send message to content script to open chat
                 const [tab] = await chrome.tabs.query({active: true, lastFocusedWindow: true});
                 if(tab.id){
-                    let response = await chrome.tabs.sendMessage(tab.id,{
+                    await chrome.tabs.sendMessage(tab.id,{
                         contentScriptQuery: "openChat",
                         bot_id: botName,
-                        title: title,
+                        title: chatItem.textContent,
                         chat_id: id
-                    }, function(response) {
-                        if(response){
-                            console.log(response);
-                        }else
-                            console.log("no response");
                     });
                 }else{
                     console.log("no tab id")
