@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Lanterns",
-  "version": "1.3.10",
+  "version": "1.3.11",
   "description": "A chrome extension for user online content moderation.",
   "icons": {
     "16": "images/logo_16.png",
