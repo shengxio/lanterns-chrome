@@ -46,7 +46,9 @@ chrome.runtime.onUpdateAvailable.addListener(function() {
   // Send a message to the popup window to update the UI
 }); 
 
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {  
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  console.log(request);
+
   // send request to popup and wait for response
   let header = new Headers();
   header.append("Content-Type", "application/json");
@@ -54,85 +56,102 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
   let request_json = {
     headers:header
+  };
+  let url = request.api_url +"/"+ request.resource;
+
+  switch(request.contentScriptQuery){
+    case "getBots":
+      request_json.method = "GET";
+      break;
+    case "addBot":
+      request_json.method = "POST";
+      request_json.body = JSON.stringify(request.data);
+      break;
+    case "deleteBot":
+      request_json.method = "DELETE";
+      url = url+ "?" + new URLSearchParams({
+        user_id: request.user_id,
+        bot_id: request.bot_id
+      });
+      request_json.body = JSON.stringify(request.data);
+      break;
+    case "updateBot":
+      request_json.method = "PUT";
+      url = url+ "?" + new URLSearchParams({
+        user_id: request.user_id,
+        bot_id: request.bot_id
+      });
+      request_json.body = JSON.stringify(request.data);
+      break;
+
+    case "getServices":
+      request_json.method = "GET";
+      break;
+    case "addService":
+      request_json.method = "POST";
+      request.data.user_id = request.user_id;
+      request_json.body = JSON.stringify(request.data);
+      break;
+    case "deleteService":
+      request_json.method = "DELETE";
+      url = url+ "?" + new URLSearchParams({
+        user_id: request.user_id,
+        service_id: request.service_id
+      });
+      request_json.body = JSON.stringify(request.data);
+      break;
+    case "updateService":
+      break;
+
+    case "getChats":
+      request_json.method = "GET";
+      url = url+ "?" + new URLSearchParams({
+        user_id: request.user_id,
+        bot_id: request.bot_id
+      });
+      break;
+    case "addChat":
+      request_json.method = "POST";
+      url = url+ "?" + new URLSearchParams({
+        user_id: request.user_id,
+        bot_id: request.bot_id,
+      });
+      request_json.body = JSON.stringify(request.data);
+      break;
+    case "deleteChat":
+      request_json.method = "DELETE";
+      url = url+ "?" + new URLSearchParams({
+        user_id: request.user_id,
+        bot_id: request.bot_id,
+      });
+      request_json.body = JSON.stringify(request.data);
+      break;
+    case "updateChat":
+      console.log("update chat:" + request.data);
+      request_json.method = "PUT";
+      url = url+ "?" + new URLSearchParams({
+        user_id: request.user_id,
+        bot_id: request.bot_id
+      });
+      request_json.body = JSON.stringify(request.data);
+      break;
+      
+    case "getQueue":
+      request_json.method = "GET";
+      url = url+ "?" + new URLSearchParams({
+        queue_id: request.queue_id
+      });
+      break;
+
+    default:
+      break;
+      
   }
-  let url = request.api_url +"/"+ request.resource
 
-  if (request.contentScriptQuery == "getBots") { // tested
-    request_json.method = "GET"
-
-  } else if(request.contentScriptQuery == "addBot"){
-  } else if(request.contentScriptQuery == "deleteBot"){
-  } else if(request.contentScriptQuery == "updateBot"){
-  
-  } else if(request.contentScriptQuery == "getServices") { // tested
-    request_json.method = "GET"
-    
-  } else if(request.contentScriptQuery == "addService"){
-    request_json.method = "POST"
-    request.data.user_id = request.user_id
-    request_json.body = JSON.stringify(request.data);
-
-  } else if(request.contentScriptQuery == "deleteService"){
-    request_json.method = "DELETE"
-    url = url+ "?" + new URLSearchParams({
-      user_id: request.user_id,
-      service_id: request.service_id
-    });
-    request_json.body = JSON.stringify(request.data);
-  
-  } else if(request.contentScriptQuery == "updateService"){
-  } else if (request.contentScriptQuery == "getChats") { // tested
-    request_json.method = "GET"
-    url = url+ "?" + new URLSearchParams({
-      user_id: request.user_id,
-      bot_id: request.bot_id
-    });
-    
-  } else if (request.contentScriptQuery == "addChat") { // tested
-    request_json.method = "POST"
-    url = url+ "?" + new URLSearchParams({
-      user_id: request.user_id,
-      bot_id: request.bot_id,
-    });
-    request_json.body = JSON.stringify(request.data);
-
-  } else if (request.contentScriptQuery == "deleteChat") {
-    request_json.method = "DELETE"
-    url = url+ "?" + new URLSearchParams({
-      user_id: request.user_id,
-      bot_id: request.bot_id,
-    });
-    request_json.body = JSON.stringify(request.data);
-  
-  } else if (request.contentScriptQuery == "updateChat") {
-    console.log("update chat:" + request.data);
-    request_json.method = "PUT"
-    url = url+ "?" + new URLSearchParams({
-      user_id: request.user_id,
-      bot_id: request.bot_id
-    });
-    request_json.body = JSON.stringify(request.data);
-    
-
-  }  else if (request.contentScriptQuery == "getQueue") {
-    request_json.method = "GET"
-    url = url+ "?" + new URLSearchParams({
-      chat_id: request.chat_id
-    });
-    // request_json.body = JSON.stringify(request.data);
-
-  } else if (request.contentScriptQuery == "addQueue") {
-
-  } else if (request.contentScriptQuery == "deleteQueue") {
-
-  } else if (request.contentScriptQuery == "updateQueue") {
-    
-  }
-
-  console.log(sender)
-  console.log(request)
+  console.log(sender);
+  console.log(request);
   console.log(request_json);
-  console.log(url)
+  console.log(url);
 
   let req = new Request(url,request_json);
 
