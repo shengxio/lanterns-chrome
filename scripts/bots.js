@@ -56,16 +56,33 @@ function createbot(name,description){
     entryTitle.className = "list-entry-title";
     entryTitle.textContent = name;
 
-    let entryDescription = document.createElement("div");
+    let entryDescription = document.createElement("span");
     entryDescription.className = "list-entry-description";
     entryDescription.textContent = description;
 
     right.appendChild(entryTitle);
-    right.appendChild(entryDescription);
+    // right.appendChild(entryDescription);
 
     entry.appendChild(left);
     entry.appendChild(right);
+    entry.appendChild(entryDescription);
+    // addDescriptionEvents(entry,description);
 
     return entry;
 
 }
+
+// a function which adds mouseover and mouseout events to the list entries to create and remove the description
+// function addDescriptionEvents(entry,description){
+//     entry.onmouseover = function(){
+//         let descriptionDiv = document.createElement("div");
+//         descriptionDiv.className = "list-entry-description";
+//         descriptionDiv.textContent = description;
+//         descriptionDiv.id = "description";
+//         entry.appendChild(descriptionDiv);
+//     }
+//     entry.onmouseout = function(){
+//         let descriptionDiv = document.getElementById("description");
+//         descriptionDiv?.remove();
+//     }
+// }
