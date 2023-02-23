@@ -40,7 +40,6 @@ $(document).ready(function(){
             api_key: appComponents.api_key,
             api_url: appComponents.api_url,
             user_id: appComponents.user_id,
-            // user_id: "test",
             resource: "chats"
         }, function(response) {
             if(response){
@@ -94,7 +93,7 @@ $(document).ready(function(){
         console.log("creating chat entry for "+title)
         let entry = document.createElement("div");
         entry.id = id;
-        entry.className = "list-entry";
+        entry.className = "list-chat";
 
         let chatItem = document.createElement("div");
         chatItem.className = "chat-item";
