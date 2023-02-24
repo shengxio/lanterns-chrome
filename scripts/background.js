@@ -143,6 +143,34 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       });
       break;
 
+    case "addMessage":
+      request_json.method = "POST";
+      url = url+ "?" + new URLSearchParams({
+        queue_id: request.queue_id
+      });
+      let data_add = {"add":{}};
+      data_add.add[request.timestamp] = request.text;
+      request_json.body = JSON.stringify(data_add);
+
+      break;
+
+    case "deleteMessage":
+      request_json.method = "DELETE";
+      url = url+ "?" + new URLSearchParams({
+        queue_id: request.queue_id
+      });
+      
+      request_json.body = JSON.stringify({"remove":[request.timestamp]});
+      break;
+
+    case "updateMessage":
+      request_json.method = "PUT";
+      url = url+ "?" + new URLSearchParams({
+        queue_id: request.queue_id
+      });
+      request_json.body = JSON.stringify({"update":[request.timestamp]});
+
+
     default:
       break;
       

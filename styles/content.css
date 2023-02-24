@@ -288,6 +288,7 @@
     /* Position the tooltip */
     position: absolute;
     z-index: 1;
+    margin-top:20px;
     left:30%;
 }
 
@@ -518,66 +519,48 @@
     height: 250;
     border: none;
     border-radius: 0px;
-    background-color: transparent;
+    background-color: #fff;
+    opacity: .75;
 
     overflow-y: auto;
 }
 
-/* user message container */
-/* .user-message-container{
-    width: auto;
-    max-width: 80%;
-    height: auto;
-    border: 1px solid #888;
-    border-radius: 5px;
-    background-color: #3c3;
-    float: right;
-    padding: 5px;
-} */
-
-/* bot message container*/
-/* .bot-message-container{
-    width: auto;
-    max-width: 80%;
-    height: auto;
-    border: 1px solid #888;
-    border-radius: 5px;
-    background-color: #fff;
-    float: left;
-    padding: 5px;
-} */
-
 /* user message text*/
 .user-message-text{
     width: auto;
-    max-width: 80%;
+    max-width: 75%;
     height: auto;
+
     border: 1px solid #ccc;
     border-radius: 10px;
     background-color: #3c3;
+
     display: block;
     float: right;
     padding: 5px;
     margin: 5px;
+    opacity: 1;
 
     color: #444;
     font-size: 14px;
     font-family: "Open Sans", sans-serif;
 }
 
-
-
 /* bot message text*/
 .bot-message-text{
     width: auto;
-    max-width: 80%;
+    max-width: 75%;
     height: auto;
+
     border: 1px solid #888;
     border-radius: 10px;
     background-color: #fff;
+    
+    display: block;
     float: left;
     padding: 5px;
     margin: 5px;
+    opacity: 1;
 
     color: #666;
     font-size: 14px;
@@ -623,5 +606,59 @@ border-radius: 10px;
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-background: #b30000; 
+background: #666;
+}
+
+/* message control button */
+.message-control-button{
+    width: 2auto;
+    height: auto;
+    border: none;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #888;
+    padding:2.5px;
+    margin: 2.5px;
+    resize: none;
+    overflow-y: auto;
+    vertical-align: bottom;
+}
+
+/* message control button on mouse hover */
+.message-control-button:hover{
+    cursor: pointer;
+    box-shadow: 0 0 3px #888;
+}
+
+/* message control button on mouse down */
+.message-control-button:active{
+    cursor: pointer;
+    box-shadow: 0 0 3px #ccc;
+}
+
+/* delete button */
+.delete-button{
+    width: 20px;
+    height: 20px;
+    border: none;
+    border-radius: 5px;
+}
+
+/* regenerate-button */
+.regenerate-button{
+    width: 20px;
+    height: 20px;
+    border: none;
+    border-radius: 5px;
+
+}
+
+/* message-container */
+.message-container{
+    width: 100%;
+    display: block;
+    height: auto;
+    border: none;
+    border-radius: 0px;
+    padding: 0%;
 }
