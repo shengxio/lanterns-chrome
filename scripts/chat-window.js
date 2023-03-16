@@ -121,42 +121,42 @@ $(document).ready(function(){
             regenerateButton.alt = "Regenerate Message";
 
             // add event listener to regenerate button
-        regenerateButton.addEventListener("click", function(){
-            // prompt user for continue
-            let confirm = window.confirm("Regenerate the message will remove the last generated message. Do you want to continue?");
+            regenerateButton.addEventListener("click", function(){
+                // prompt user for continue
+                let confirm = window.confirm("Regenerate the message will remove the last generated message. Do you want to continue?");
 
-            if (confirm){
-                // change the text of the message to "thinking again..."
-                messageText.textContent = "Thinking again...";
+                if (confirm){
+                    // change the text of the message to "thinking again..."
+                    messageText.textContent = "Thinking again...";
 
-                // send message to background.js
-                chrome.runtime.sendMessage({
-                    contentScriptQuery: "updateMessage",
-                    queue_id: chatId,
-                    bot_id: botName,
-                    api_key: appComponents.api_key,
-                    api_url: appComponents.api_url,
-                    user_id: appComponents.user_id,
-                    timestamp: timestamp,
-                    resource: "queues"
-                }, function(response){
-                    if("text" in response){
-                        // trim the beginning of the string at : and space
-                        // update bot message
+                    // send message to background.js
+                    chrome.runtime.sendMessage({
+                        contentScriptQuery: "updateMessage",
+                        queue_id: chatId,
+                        bot_id: botName,
+                        api_key: appComponents.api_key,
+                        api_url: appComponents.api_url,
+                        user_id: appComponents.user_id,
+                        timestamp: timestamp,
+                        resource: "queues"
+                    }, function(response){
+                        if("text" in response){
+                            // trim the beginning of the string at : and space
+                            // update bot message
 
-                        messageText.textContent = dropMessageHead(response.text);
-                        messageText.id = response.timestamp.toString();
-                    }else{
-                        // update bot message
-                        messageText.textContent = "Sorry, I am a bit overwhelmed at this moment, please try later...";
-                        console.log(response);
-                    }
-        
-                });
-            } else {
-                return;
-            }
-        });
+                            messageText.textContent = dropMessageHead(response.text);
+                            messageText.id = response.timestamp.toString();
+                        }else{
+                            // update bot message
+                            messageText.textContent = "Sorry, I am a bit overwhelmed at this moment, please try later...";
+                            console.log(response);
+                        }
+            
+                    });
+                } else {
+                    return;
+                }
+            });
 
             // add message text
             messageText.classList.add("bot-message-text");
@@ -210,8 +210,11 @@ $(document).ready(function(){
             if("text" in response){
                 // trim the beginning of the string at : and space
                 // update bot message
-                botMessage.textContent = dropMessageHead(response.text);
-                botMessage.id = response.timestamp.toString();
+                let botMessage_text = botMessage.querySelector("div");
+                if(botMessage_text){
+                    botMessage_text.textContent = dropMessageHead(response.text);
+                    botMessage_text.id = response.timestamp.toString();
+                }
             }else{
                 // update bot message
                 botMessage.textContent = "Sorry, I am a bit overwhelmed at this moment, please try later...";
@@ -258,4 +261,66 @@ function dropMessageHead(text){
         message = text.substring(index+2);
     }
     return message;
+}
+
+// the following function will request user permission to access the microphone
+// upon approval, the startRecording function will be called
+function requestMicPermission(){
+
+    // check if the browser support the getUserMedia
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
+        // request user permission
+        navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(function(stream) {
+            // if user allow the permission, then start the recording
+            startRecording(stream);
+        })
+        .catch(function(err) {
+            // if user deny the permission, then show the error message
+            alert("Please allow the microphone permission to use the voice input function.");
+        });
+    } else {
+        // if the browser does not support the getUserMedia, then show the error message
+        alert("Your browser does not support the microphone permission.");
+    }
+}
+
+// the following function will start the recording
+function startRecording(stream){
+    // create a MediaRecorder object
+    let mediaRecorder = new MediaRecorder(stream);
+    // create an array to store the recorded data
+    let recordedChunks = [];
+    // add event listener to the dataavailable event
+    mediaRecorder.addEventListener("dataavailable", function(e){
+        // push the recorded data to the array
+        recordedChunks.push(e.data);
+    });
+    // add event listener to the stop event
+    mediaRecorder.addEventListener("stop", function(){
+        // convert the recorded data into a blob
+        let blob = new Blob(recordedChunks, { type: "audio/webm" });
+        // create a form data object
+        let formData = new FormData();
+        // append the blob to the form data
+        formData.append("audio", blob, "audio.webm");
+        // send the form data to the server
+        $.ajax({
+            url: "https://api.lanterns.live/api/v1/voice",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response){
+                // if the server response is success, then add the text to the input textarea
+                $("#chat-input-text").val(response.text);
+            },
+            error: function(error){
+                // if the server response is error, then show the error message
+                alert("Sorry, I am a bit overwhelmed at this moment, please try later...");
+            }
+        });
+    });
+    // start the recording
+    mediaRecorder.start();
 }

@@ -15,28 +15,33 @@ $(document).ready(function(){
 
         if(botList){
             appComponents["bots"].forEach(bot => {
-                if(!document.getElementById(bot.name)){
-                    let bodyEntry = createbot(bot.name,bot.description);
-                    bodyEntry.id = bot.name;
+                if(!document.getElementById(bot.id)){
+                    let bodyEntry = createbot(bot);
+                    bodyEntry.id = bot.id;
             
                     bodyEntry.onclick = function(){
-                        console.log(bot.name + " clicked")
+                        console.log(bot.id + " clicked")
                         
                         // open chats page
-                        window.open("../pages/chats.html?bot="+bot.name,"_self");
+                        window.open("../pages/chats.html?bot="+bot.id,"_self");
                     }
                     botList?.appendChild(bodyEntry);
                 }
             });
         }
     });
+
+    // open request bot page in new tab after user clicks on request bot button
+    $("#button-request-bot").click(function(){
+        window.open("https://forms.gle/F5uc7FzBRqZrZ5r5A");
+    });
        
 });
 
 
 // create panel entry
-function createbot(name,description){
-    console.log("creating bot entry for "+name)
+function createbot(bot){
+    console.log("creating bot entry for "+bot.id)
     let entry = document.createElement("li");
     entry.className = "list-entry";
 
@@ -45,7 +50,7 @@ function createbot(name,description){
 
     let entryIcon = document.createElement("img");
     entryIcon.className = "list-entry-icon";
-    entryIcon.src = "../images/"+name+".png";
+    entryIcon.src = bot.avatar;
 
     left.appendChild(entryIcon);
 
@@ -54,11 +59,13 @@ function createbot(name,description){
 
     let entryTitle = document.createElement("div");
     entryTitle.className = "list-entry-title";
-    entryTitle.textContent = name;
+    entryTitle.textContent = bot.id;
 
     let entryDescription = document.createElement("span");
     entryDescription.className = "list-entry-description";
-    entryDescription.textContent = description;
+    entryDescription.textContent = bot.description;
+
+    // let 
 
     right.appendChild(entryTitle);
     // right.appendChild(entryDescription);
@@ -66,23 +73,14 @@ function createbot(name,description){
     entry.appendChild(left);
     entry.appendChild(right);
     entry.appendChild(entryDescription);
-    // addDescriptionEvents(entry,description);
 
     return entry;
 
 }
 
-// a function which adds mouseover and mouseout events to the list entries to create and remove the description
-// function addDescriptionEvents(entry,description){
-//     entry.onmouseover = function(){
-//         let descriptionDiv = document.createElement("div");
-//         descriptionDiv.className = "list-entry-description";
-//         descriptionDiv.textContent = description;
-//         descriptionDiv.id = "description";
-//         entry.appendChild(descriptionDiv);
-//     }
-//     entry.onmouseout = function(){
-//         let descriptionDiv = document.getElementById("description");
-//         descriptionDiv?.remove();
-//     }
-// }
+function truncateDescription(description,limit=70){
+    if(description.length > limit){
+        return description.substring(0,limit)+"...";
+    }
+    return description;
+}
